@@ -182,29 +182,23 @@ function scanText( node, phs, prefix ){
 
 function scanLoop(node, subdt, phs){
     var field = node.getAttribute('each');
-    var firstChild, empty;
-    var childNodes = node.childNodes;
-    for(var i = 0, len = childNodes.length; i < len; i++){
-        if(childNodes[i].nodeType === 3) continue;
-        if(firstChild && !empty) empty = childNodes[i];
-        if(!firstChild) firstChild = childNodes[i];
-    }
+    var children = node.children;
     var _dt = subdt[field] = {
-        item: firstChild,
-        empty: empty,
+        item: children['0'],
+        empty: children['1'],
         items: []
     };
     getHandlers(phs, field).push({
         fill: function(val){
             this.clean();
             if(!val || val.length ===0){
-                empty && node.appendChild(empty);
+                _dt.empty && node.appendChild(_dt.empty);
             }else{
                 for(var i = 0, len = val.length; i < len; i++){
                     var item = _dt.items[i];
                     if(!item){
-                        var clone = firstChild.cloneNode(true);
-                        isIE && (clone.innerHTML = firstChild.innerHTML);
+                        var clone = _dt.item.cloneNode(true);
+                        isIE && (clone.innerHTML = _dt.item.innerHTML);
                         item = _dt.items[i] = new dt(clone);
                     }
                     item.fill( val[i] );
