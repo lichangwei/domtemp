@@ -16,7 +16,7 @@ function scanText(dto, node, phs){
     var value = node.nodeValue;
     var regexp = dt.opt('regexp');
     // if there's no placeholder, ignore it.
-    if(!regexp.test(value)) return;
+    if(!value.match(regexp)) return;
     
     var parent = node.parentNode;
     var txt;
@@ -39,21 +39,11 @@ function scanText(dto, node, phs){
                 if( val && val.nodeType !== 1 && !isArray(val) || !has$ ){
                     val = textNode(val);
                 }
-                if( !isArray(val) ){
-                    val = [val]
-                }
                 var current = this._now;
                 if( isArray(current) ){
                     current = current[0];
                 }
-                if()
-                if( isArray(val) ){
-                    for( var i = 0; i < val.length; i++){
-                        parent.insertBefore(val[i], now);
-                    }
-                }else if(val){
-                    parent.insertBefore(val, now);
-                }
+                addNode(parent, current, val);
                 removeNode(this._now);
                 this._now = val;
             },
@@ -90,13 +80,23 @@ function textNode(text){
 }
 
 function removeNode(node){
-    if( isArray(now) ){
-        var parnet = now[0].parentNode;
+    if( isArray(node) ){
+        var parnet = node[0].parentNode;
         for(var i = 0; i < now.length; i++){
-            parent.removeChild( now[i] );
+            parent.removeChild( node[i] );
         }
     }else{
-        now.parentNode.removeChild(now);
+        node.parentNode.removeChild(node);
+    }
+}
+
+function addNode(parent, child, val){
+    if( isArray(val) ){
+        for( var i = 0; i < val.length; i++){
+            parent.insertBefore(val[i], child);
+        }
+    }else if(val){
+        parent.insertBefore(val, child);
     }
 }
 

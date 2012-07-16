@@ -49,7 +49,7 @@ var opts = {
 
 dt.prototype = {
     fill: function(data, append){
-        //this._hide();
+        this._hide();
         for(var field in this._phs){
             var handlers = this._phs[field].handlers;
             var val = evaluate(data, field);
@@ -62,7 +62,7 @@ dt.prototype = {
                 handlers[i].fill(val);
             }
         }
-        //return this._show();
+        return this._show();
     },
     append: function(data){
         return this.fill(data, true);
