@@ -2,15 +2,54 @@
 (function(){
 
 var dt = window.dt = function(node, opts){
+    // below code allow to create dt object without 'new'
+    if(!(this instanceof arguments.callee)){
+        return new arguments.callee(node, opts);
+    }
     this.node = node;
     this._opts = opts || {};
     this._phs = {};
     this._subdt = {};
-    scan(node, this._subdt, this._phs);
+    scan(this, this.node, this._phs, this._subdt);
 };
+
+dt.scanner = {
+    add: function(scanner, index){
+        if(index === void 0){
+            return scanners.push(scanner);
+        }
+        scanners.splice(index, 0, scanner);
+    },
+    remove: function(scanner){
+        if(typeof scanner === 'number'){
+            delete scanners[scanner];
+        }else if(typeof scanner === 'string'){
+            for(var i = 0; i < scanners.length; i++){
+                if(scanners[i].name === scanner){
+                    delete scanners[i];
+                    return;
+                }
+            }
+        }
+    }
+}
+
+dt.opt = function(k, v){
+    if(v !== void 0){
+        opts[k] = v;
+    }
+    return opts[k];
+};
+
+var scanners = [];
+var opts = {
+    // match for ${{xx.xx.xx}}, {{xx}} etc.
+    regexp: /(\$?)\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig
+};
+
 dt.prototype = {
     fill: function(data, append){
-        this._hide();
+        //this._hide();
         for(var field in this._phs){
             var handlers = this._phs[field].handlers;
             var val = evaluate(data, field);
@@ -23,7 +62,7 @@ dt.prototype = {
                 handlers[i].fill(val);
             }
         }
-        return this._show();
+        //return this._show();
     },
     append: function(data){
         return this.fill(data, true);
@@ -38,6 +77,9 @@ dt.prototype = {
         }
         return this._show();
     },
+    fetch: function(){
+        
+    },
     opt: function(k, v){
         if(typeof k === 'string'){
             this._opts[k] = v;
@@ -48,6 +90,12 @@ dt.prototype = {
         }
         return this;
     },
+    addHandler: function(field, handler){
+        if( !this._phs[field] ){
+            this._phs[field] = {handlers: []};
+        }
+        this._phs[field].handlers.push(handler);
+    },
     _show: function(){
         var node = this.node;
         if( !node._parent ) return this;
@@ -56,194 +104,49 @@ dt.prototype = {
     },
     _hide: function(){
         var node = this.node;
+        // remember its parentNode for append to dom when showing.
         if( !node._parent ) node._parent = node.parentNode;
         if( !node._parent ) return this;
+        // create a p elements to hold its position.
         if( !node._replace ) node._replace = document.createElement('p');
         node._parent.replaceChild(node._replace, node);
         return this;
     }
 };
 
-var regex = /(\$?)\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
-var alias = {
-    'imgsrc': 'src',
-    'styl': 'style'
-};
-var isIE = navigator.userAgent.indexOf('MSIE') >= 0;
+function scan(dto, node, phs){
+    // only scan text node or element node
+    if(node.nodeType !== 1 && node.nodeType !== 3) return;
+    for(var i = 0;  i < scanners.length; i++){
+        var result = scanners[i].scan(dto, node, phs);
+        // allow cancel next scanners, so please note the sequence of scanners.
+        if(result === false) return;
+    }
+    scanChildren(dto, node, phs);
+}
 
-function scan(node, subdt, phs){
-    if(node.nodeType === 3) return scanText(node, phs);
-    if(node.nodeType !== 1) return ;
-    scanAttr(node, phs);
-    // isFormField( node ) && scanFormField( node, phs, fields, prefix );
-    if(node.getAttribute('each')) return scanLoop(node, subdt, phs);
+function scanChildren(dto, node, phs){
     // node.childNodes changed by scanText function.
     // fuck IE, we cannnot use the simpliest way below:
     // var children = Array.prototype.slice.call( node.childNodes );
+    var childNodes = node.childNodes;
+    var length = childNodes.length;
     var children = [];
-    for(var i = 0, len = node.childNodes.length; i < len; i++){
-        children.push( node.childNodes[i] );
-    }
-    for(var i = 0, len = children.length; i < len; i++){
-        scan(children[i], subdt, phs);
-    }
-}
-
-function scanAttr(node, phs){
-    var attrs = node.attributes;
-    for(var i = 0, len = attrs.length; i < len; i++){
-        var attr = attrs[i];
-        var _ori = attr.nodeValue;
-        var _phs = [];
-        if(typeof _ori !== 'string') continue;
-        _ori.replace(regex, function(match, has$, field, exp, startIdx){
-            var ph = {f: field, m: match},
-                name = alias[attr.nodeName] || attr.nodeName,
-                handler = {
-                    fill: function(v){
-                        var val = this._ori, ph, _tm;
-                        for(var i = 0; i < this._phs.length; i++){
-                            ph = this._phs[i];
-                            _tm = phs[ph.f].val;
-                            if( ph.convert )
-                                _tm = ph.convert( _tm );
-                            val = val.replace(ph.m, _tm||'');
-                        }
-                        setAttribute(node, name, val);
-                    },
-                    clean: function(){
-                        var val = this._ori.replace(regex, '');
-                        setAttribute(node, name, val);
-                    },
-                    _ori: _ori,
-                    _phs: _phs
-                };
-            if(exp) ph.convert = convert(field, exp);
-            _phs.push( ph );
-            getHandlers(phs, field).push( handler );
-        });
-    }
-}
-
-function scanText( node, phs, prefix ){
-    var parent = node.parentNode;
-    var value = node.nodeValue;
-    var txt, idx = 0;
-    node.nodeValue.replace(regex, function( match, has$, field, exp, startIdx ){
-        if( txt = value.substring(idx, startIdx) ) parent.insertBefore( textNode(txt), node );
-        var dn = textNode( match );
-        var handler = {
-            fill: function( val ){
-                if( this.convert ) val = this.convert(val);
-                if( val.jquery ){
-                    val = $.map(val.toArray(), function(it){return it;});
-                };
-                if( val.nodeType !== 1 && !isArray(val) || !has$ ) val = textNode( val );
-                var now = this._now;
-                if( isArray(now) ){
-                    for( var i = 1; i < now.length; i++){
-                        parent.removeChild( now[i] );
-                    }
-                    now = now[0];
-                }
-                if( isArray(val) ){
-                    for( var i = 0; i < val.length; i++){
-                        parent.insertBefore( val[i], now );
-                    }
-                }else if(val){
-                    parent.insertBefore( val, now );
-                }
-                parent.removeChild( now );
-                this._now = val;
-            },
-            clean: function(){
-                var now = this._now;
-                if( isArray(now) ){
-                    for(var i = 1; i < now.length; i++){
-                        parent.removeChild( now[i] );
-                    }
-                    now = now[0];
-                }
-                parent.replaceChild( this._empty, now );
-                this._now = this._empty;
-            },
-            _ori: dn,
-            _now: dn,
-            _empty: textNode('')
-        };
-        if( exp ) handler.convert = convert( field, exp );
-        getHandlers(phs, field).push( handler );
-        parent.insertBefore( dn, node );
-        idx = startIdx + match.length;
-    });
-    if( txt = value.substring(idx) ) parent.insertBefore( textNode(txt), node );
-    parent.removeChild( node );
-}
-
-function scanLoop(node, subdt, phs){
-    var field = node.getAttribute('each');
-    var children = node.children;
-    var _dt = subdt[field] = {
-        item: children['0'],
-        empty: children['1'],
-        items: []
-    };
-    getHandlers(phs, field).push({
-        fill: function(val){
-            this.clean();
-            if(!val || val.length ===0){
-                _dt.empty && node.appendChild(_dt.empty);
-            }else{
-                for(var i = 0, len = val.length; i < len; i++){
-                    var item = _dt.items[i];
-                    if(!item){
-                        var clone = _dt.item.cloneNode(true);
-                        isIE && (clone.innerHTML = _dt.item.innerHTML);
-                        item = _dt.items[i] = new dt(clone);
-                    }
-                    item.fill( val[i] );
-                    node.appendChild(item.node);
-                }
-            }
-        },
-        clean: function(){
-            for(var i = node.childNodes.length - 1; i >= 0; i--){
-                node.removeChild(node.childNodes[i]);
-            }
-            for(var i = 0, len = _dt.items.length; i < len; i++){
-                _dt.items[i].clean();
-            }
+    var child;
+    for(var i = 0; i < length; i++){
+        child = childNodes[i];
+        var nodeType = child.nodeType;
+        if(nodeType === 1 || nodeType === 3){
+            children.push(child);
         }
-    });
-}
-
-var toString = Object.prototype.toString;
-
-function isArray( obj ){
-    return obj && toString.call(obj) === '[object Array]';
-}
-
-function textNode( text ){
-    return document.createTextNode('' + text);
+    }
+    for(var i = 0; i < length; i++){
+        scan(dto, children[i], phs);
+    }
 }
 
 function convert(field, exp){
     return new Function('v', 'return ' + exp);
-}
-
-function setAttribute(node, attr, val){
-    if(attr === 'class'){
-        node.className = val;
-    }if((attr === 'style') && isIE && val){
-        node.style.cssText = val;
-    }else{
-        node.setAttribute(attr, val);
-    }
-}
-
-function getHandlers(phs, field){
-    if( !phs[field] ) phs[field] = { handlers: [] };
-    return phs[field].handlers;
 }
 
 function evaluate( ctx, exp ){
