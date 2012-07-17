@@ -5,7 +5,7 @@ var _img_src = 'http://bing.com/s/wlflag.ico';
 module('common');
 test('create-simple', function(){
     var $node = $('.simple > div');
-    var temp = new dt($node[0]).fill({'class': 'red', 'name': 'bufeng', width: 30, height: 40});
+    var temp = dt($node).fill({'class': 'red', 'name': 'bufeng', width: 30, height: 40});
     ok( $node.is('.red_title') );
     sameIgnoreCase( $.trim($node.html()), '<p>bufeng bufeng</p>' );
     deepEqual( $node.attr('jid'), 'red0red30' );
@@ -14,7 +14,7 @@ test('create-simple', function(){
 
 test('create-jquery', function(){
     var $node = $('.jquery > div');
-    var temp = new dt($node[0]);
+    var temp = dt($node);
     temp.fill( {'name': 'bufeng', 'img': $('<img>', {src: _img_src}), friends: $('<span>', {text: 'ivy'})} );
     deepEqual( $node.find('img').attr('src'), _img_src );
     deepEqual( $node.find('span').html(), 'ivy' );
@@ -22,7 +22,7 @@ test('create-jquery', function(){
 
 test('create-subattr', function(){
     var $node = $('.subattr > div');
-    var temp = new dt($node[0]);
+    var temp = dt($node);
     var user = {
         'name': {last: 'feng', first: 'bu'}, 
         'img': $('<img>', {src: _img_src}) 
@@ -34,7 +34,7 @@ test('create-subattr', function(){
 
 test('create-alias', function(){
     var $node = $('.alias > div');
-    var temp = new dt($node[0]);
+    var temp = dt($node);
     var data = {
         bg: _img_src,
         img: _img_src
@@ -46,12 +46,12 @@ test('create-alias', function(){
 
 test('create-opt', function(){
     var $node = $('.opt > div');
-    var temp = new dt($node[0]);
+    var temp = dt($node);
     
     var genders = { 'm': 'Male', 'f': 'Female' };
     var user = { 'lastName': 'bu', 'firstName': 'feng', 'gender': 'm', 'age': 26 };
     
-    var temp = new dt($node[0], {
+    var temp = dt($node[0], {
         'gender': function( val ){
             return genders[val] || 'Unknown';
         },
@@ -67,7 +67,7 @@ test('create-opt', function(){
 
 test('create-loop', function(){
     var $node = $('.loop > div');
-    var temp = new dt($node[0]);
+    var temp = dt($node);
     var data = {
         users: [{
             name: 'Tom',

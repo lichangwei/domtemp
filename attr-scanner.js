@@ -9,6 +9,7 @@ dt.scanner.add({
 });
 
 function scanAttr(dto, node, phs){
+    if(node.nodeType !== 1) return ;
     var attrs = node.attributes;
     for(var i = 0, len = attrs.length; i < len; i++){
         var attr = attrs[i];
@@ -44,8 +45,6 @@ function scanAttr(dto, node, phs){
     }
 }
 
-var isIE = navigator.userAgent.indexOf('MSIE') >= 0;
-
 var alias = {
     'imgsrc': 'src',
     'styl': 'style'
@@ -54,7 +53,7 @@ var alias = {
 function setAttribute(node, attr, val){
     if(attr === 'class'){
         node.className = val;
-    }if((attr === 'style') && isIE && val){
+    }if((attr === 'style') && dt.util.isIE && val){
         node.style.cssText = val;
     }else{
         node.setAttribute(attr, val);

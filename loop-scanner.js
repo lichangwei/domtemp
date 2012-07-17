@@ -9,6 +9,8 @@ dt.scanner.add({
 });
 
 function scanLoop(dto, node, phs){
+    if(!node || node.nodeType !== 1) return;
+    
     var field = node.getAttribute('each');
     if(!field) return;
     
@@ -29,7 +31,7 @@ function scanLoop(dto, node, phs){
                     var item = _dt.items[i];
                     if(!item){
                         var clone = _dt.item.cloneNode(true);
-                        isIE && (clone.innerHTML = _dt.item.innerHTML);
+                        dt.util.isIE && (clone.innerHTML = _dt.item.innerHTML);
                         item = _dt.items[i] = new dt(clone);
                     }
                     item.fill( val[i] );
@@ -47,7 +49,5 @@ function scanLoop(dto, node, phs){
         }
     });
 }
-
-var isIE = navigator.userAgent.indexOf('MSIE') >= 0;
 
 })(dt);

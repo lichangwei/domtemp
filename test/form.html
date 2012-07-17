@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Tester</title>
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <style type="text/css">
+        #user-info{
+            margin-top: 20px;
+        }
+        
+        input[type=radio], input[type=checkbox]{
+            vertical-align: text-bottom;
+        }
+        
+        .input label{
+            float: none;
+            margin: 0 20px 0 4px;
+        }
+        
+        .input-radio, .input-checkbox{
+            padding-top: 4px;
+        }
+    </style>
+</head>
+<body>
+<form id="user-info">
+    <fieldset>
+        <legend>编辑用户信息</legend>
+    </fieldset>
+    <div class="clearfix">
+        <label>姓名：</label>
+        <div class="input">
+            <input type="text" name="name" class="xlarge" autofocus>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>性别：</label>
+        <div class="input input-radio">
+            <input type="radio" name="gender" value="0" id="fui-m" number><label for="fui-m">男性</label>
+            <input type="radio" name="gender" value="1" id="fui-f"><label for="fui-f">女性</label>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>年龄：</label>
+        <div class="input">
+            <input type="number" name="age" max="100" min="0" step="1" class="xlarge" number>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>简介：</label>
+        <div class="input">
+            <textarea name="desc" class="xlarge"></textarea>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>语言：</label>
+        <div class="input input-checkbox">
+            <input type="checkbox" name="details.language" value="Chinese" id="fui-c"><label for="fui-c">中文</label>
+            <input type="checkbox" name="details.language" value="English" id="fui-e"><label for="fui-e">英文</label>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>学校：</label>
+        <div class="input">
+            <select name="details.school" class="xlarge">
+                <option value="">请选择毕业院校</option>
+                <option value="HFUT">HFUT</option>
+                <option value="NOT">NOT</option>
+            </select>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label>运动：</label>
+        <div class="input">
+            <select name="details.sports" multiple class="xlarge">
+                <option value="">请选择喜爱的体育项目</option>
+                <option value="Basketball">篮球</option>
+                <option value="Football">足球</option>
+                <option value="PingPong">乒乓球</ption>
+            </select>
+        </div>
+    </div>
+    <div class="clearfix">
+        <label></label>
+        <div class="input">
+            <input type="checkbox" name="confirmed" value="1" id="fui-cf" number><label for="fui-cf">允许别人查看我的信息。</label>
+        </div>
+    </div>
+</form>
+<div class="actions">
+    <input name="fetch" type="button" value="获取数据" class="btn primary">
+    <input name="reset" type="button" value="恢复" class="btn">
+    <input name="clean" type="button" value="清空" class="btn">
+</div>
+<script src="../../base/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="../domtemp.js" type="text/javascript"></script>
+<script src="../form-scanner.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+
+    var user = { 
+        name: "sofosogo",
+        gender: 0,
+        age: 24,
+        desc:"SE",
+        details:{
+            language: ["English", "Chinese"],
+            school: "HFUT",
+            sports: ["Basketball", "PingPong"]
+        },
+        confirmed: 1
+    };
+    var form = dt(document.getElementById("user-info"));
+    form.fill(user);
+    
+    $("input[name=fetch]").click(function(){
+        display( form.fetch() );
+    });
+    
+    $("input[name=reset]").click(function(){
+        form.fill( user );
+    });
+    
+    $("input[name=clean]").click(function(){
+        form.clean();
+    });
+    
+    function display( data ){
+        if( typeof console !== "undefined" && console.log ){
+            console.log( data );
+        }
+        if( typeof JSON !== "undefined" && JSON.stringify ){
+            alert( JSON.stringify(data) );
+        }else{
+            alert( data );
+        }
+    }
+
+});
+</script>
+</body>
+</html>

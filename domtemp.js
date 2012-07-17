@@ -6,7 +6,7 @@ var dt = window.dt = function(node, opts){
     if(!(this instanceof arguments.callee)){
         return new arguments.callee(node, opts);
     }
-    this.node = node;
+    this.node = parseNode(node);
     this._opts = opts || {};
     this._phs = {};
     this._subdt = {};
@@ -39,6 +39,14 @@ dt.opt = function(k, v){
         opts[k] = v;
     }
     return opts[k];
+};
+
+dt.util = {
+    isArray: function(obj){
+        var toString = Object.prototype.toString;
+        return obj && toString.call(obj) === '[object Array]';
+    },
+    isIE: navigator.userAgent.indexOf('MSIE') >= 0
 };
 
 var scanners = [];
@@ -78,7 +86,23 @@ dt.prototype = {
         return this._show();
     },
     fetch: function(){
-        
+        var data = {};
+        for(var field in this._phs){
+            var phs = this._phs[field];
+            var handlers = phs.handlers;
+            var dat;
+            for(var i = 0; i < handlers.length; i++){
+                if(handlers[i].fetch){
+                    dat = handlers[i].fetch();
+                    break;
+                }else if(handlers[i].fetchable){
+                    dat = phs.val;
+                    break;
+                }
+            }
+            assemble(data, field, dat);
+        }
+        return data;
     },
     opt: function(k, v){
         if(typeof k === 'string'){
@@ -95,6 +119,12 @@ dt.prototype = {
             this._phs[field] = {handlers: []};
         }
         this._phs[field].handlers.push(handler);
+    },
+    getHandlers: function(field){
+        if( !this._phs[field] ){
+            this._phs[field] = {handlers: []};
+        }
+        return this._phs[field].handlers;
     },
     _show: function(){
         var node = this.node;
@@ -118,9 +148,7 @@ function scan(dto, node, phs){
     // only scan text node or element node
     if(node.nodeType !== 1 && node.nodeType !== 3) return;
     for(var i = 0;  i < scanners.length; i++){
-        var result = scanners[i].scan(dto, node, phs);
-        // allow cancel next scanners, so please note the sequence of scanners.
-        if(result === false) return;
+        scanners[i].scan(dto, node, phs);
     }
     scanChildren(dto, node, phs);
 }
@@ -149,12 +177,38 @@ function convert(field, exp){
     return new Function('v', 'return ' + exp);
 }
 
+var container = document.createElement('body');
+function parseNode(node){
+    if(typeof node === 'string'){
+        container.innerHTML = node;
+        return container.firstChild;
+    }else if(node.jquery){
+        return node[0];
+    }
+    return node;
+}
+
 function evaluate( ctx, exp ){
     if( !ctx || !exp ) return null;
     var fs = exp.split('.'),
         data = ctx, i;
     for( i = 0; data && i < fs.length; i++ ){
         if( fs[i] ) data = data[ fs[i] ];
+    }
+    return data;
+}
+
+function assemble(data, field, val){
+    if(data && field){
+        var fs = field.split('.');
+        var temp = data;
+        for(var i = 0, len = fs.length; i < len - 1; i++){
+            if(!fs[i]) continue;
+            temp[fs[i]] = temp[fs[i]] || {};
+            temp = temp[fs[i]];
+        }
+        console.log(fs[len-1] + '=' + val)
+        temp[fs[len-1]] = val;
     }
     return data;
 }

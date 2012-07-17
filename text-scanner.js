@@ -36,11 +36,11 @@ function scanText(dto, node, phs){
                 if( val && val.jquery ){
                     val = $.map(val.toArray(), function(it){return it;});
                 };
-                if( val && val.nodeType !== 1 && !isArray(val) || !has$ ){
+                if( val && val.nodeType !== 1 && !dt.util.isArray(val) || !has$ ){
                     val = textNode(val);
                 }
                 var current = this._now;
-                if( isArray(current) ){
+                if( dt.util.isArray(current) ){
                     current = current[0];
                 }
                 addNode(parent, current, val);
@@ -49,7 +49,7 @@ function scanText(dto, node, phs){
             },
             clean: function(){
                 var now = this._now;
-                parent.replaceChild( this._empty, isArray(now) ? now[0] : now );
+                parent.replaceChild( this._empty, dt.util.isArray(now) ? now[0] : now );
                 removeNode(this._now);
                 this._now = this._empty;
             },
@@ -70,17 +70,12 @@ function scanText(dto, node, phs){
     parent.removeChild(node);
 }
 
-var toString = Object.prototype.toString;
-function isArray(obj){
-    return obj && toString.call(obj) === '[object Array]';
-}
-
 function textNode(text){
     return document.createTextNode('' + text);
 }
 
 function removeNode(node){
-    if( isArray(node) ){
+    if( dt.util.isArray(node) ){
         var parnet = node[0].parentNode;
         for(var i = 0; i < now.length; i++){
             parent.removeChild( node[i] );
@@ -91,7 +86,7 @@ function removeNode(node){
 }
 
 function addNode(parent, child, val){
-    if( isArray(val) ){
+    if( dt.util.isArray(val) ){
         for( var i = 0; i < val.length; i++){
             parent.insertBefore(val[i], child);
         }
