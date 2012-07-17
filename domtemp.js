@@ -78,6 +78,7 @@ dt.prototype = {
     clean: function(){
         this._hide();
         for(var field in this._phs){
+            delete this._phs[field].val;
             var handlers = this._phs[field].handlers;
             for(var i = 0; i < handlers.length; i++){
                 handlers[i].clean();

@@ -85,6 +85,38 @@ test('create-loop', function(){
     deepEqual($node.find('p').length, 1);
 });
 
+test('form', function(){
+    var $node = $('.form > form');
+    var temp = dt($node);
+    var data = { 
+        name: 'sofosogo',
+        gender: 0,
+        age: 24,
+        desc: 'SE',
+        details:{
+            language: ['Chinese', 'English'],
+            school: 'HFUT',
+            sports: ['Basketball', 'PingPong']
+        },
+        confirmed: 1
+    };
+    temp.fill(data);
+    
+    deepEqual($node.find('input[name=name]').val(), 'sofosogo');
+    deepEqual($node.find('input[name=gender]')[0].checked, true);
+    deepEqual($node.find('input[name=gender]')[1].checked, false);
+    deepEqual($node.find('input[name=age]').val(), '24');
+    deepEqual($node.find('input[name="details.language"]')[0].checked, true);
+    deepEqual($node.find('input[name="details.language"]')[1].checked, true);
+    deepEqual($node.find('select[name="details.school"]').val(), 'HFUT');
+    deepEqual($node.find('select[name="details.sports"]').val()[0], 'Basketball');
+    deepEqual($node.find('select[name="details.sports"]').val()[1], 'PingPong');
+    deepEqual($node.find('input[name=confirmed]')[0].checked, true);
+    
+    var fetched = temp.fetch();
+    deepEqual(data.toString(), fetched.toString());
+});
+
 
 function sameIgnoreCase( str1, str2 ){
     return deepEqual( str1.toLowerCase(), str2.toLowerCase() );
