@@ -9,7 +9,7 @@ test('create-simple', function(){
     ok( $node.is('.red_title') );
     sameIgnoreCase( $.trim($node.html()), '<p>bufeng bufeng</p>' );
     deepEqual( $node.attr('jid'), 'red0red30' );
-    deepEqual( $node.attr('style'), 'width: 30px; height: 40px' );
+    deepEqual( $node.attr('style'), 'width: 30px; height: 40px' + ($.browser.msie ? ';' : '' ));
 });
 
 test('create-jquery', function(){
@@ -40,7 +40,11 @@ test('create-alias', function(){
         img: _img_src
     };
     temp.fill( data );
-    deepEqual( $node.attr('style'), 'background: url(' + _img_src + ') no-repeat');
+    if($.browser.msie){
+        deepEqual( $node.attr('style'), 'background: url("' + _img_src + '") no-repeat;');
+    }else{
+        deepEqual( $node.attr('style'), 'background: url(' + _img_src + ') no-repeat');
+    }
     deepEqual( $node.find('img').attr('src'), _img_src );
 });
 
