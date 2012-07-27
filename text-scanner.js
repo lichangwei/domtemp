@@ -3,6 +3,8 @@
  */
 (function(dt){
 
+'use strict';
+
 dt.scanner.add({
     scan: function(dto, node, phs){
         if(node.nodeType !== 3) return;

@@ -2,7 +2,9 @@
  * Scan attributes
  */
 (function(dt){
-    
+
+'use strict';
+
 dt.scanner.add({
     scan: scanAttr,
     name: 'attr'

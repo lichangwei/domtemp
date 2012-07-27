@@ -3,6 +3,8 @@
  */
 (function(dt){
 
+'use strict';
+
 dt.scanner.add({
     scan: scanLoop,
     name: 'loop'

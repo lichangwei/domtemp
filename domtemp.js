@@ -1,10 +1,12 @@
 
 (function(){
 
+'use strict';
+
 var dt = window.dt = function(node, opts){
     // below code allow to create dt object without 'new'
-    if(!(this instanceof arguments.callee)){
-        return new arguments.callee(node, opts);
+    if(!(this instanceof dt)){
+        return new dt(node, opts);
     }
     this.node = parseNode(node);
     this._opts = opts || {};
@@ -208,7 +210,6 @@ function assemble(data, field, val){
             temp[fs[i]] = temp[fs[i]] || {};
             temp = temp[fs[i]];
         }
-        console.log(fs[len-1] + '=' + val)
         temp[fs[len-1]] = val;
     }
     return data;

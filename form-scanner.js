@@ -3,6 +3,8 @@
  */
 (function(dt){
 
+'use strict';
+
 dt.scanner.add({
     scan: scanFormElements,
     name: 'form'
@@ -159,7 +161,6 @@ protos['select-multiple'].prototype = {
             arr = [];
         for( var i = 0; i < len; i++ ){
             if( options[i].selected ){
-                val = options[i].value;
                 arr.push( toNumber(options[i].value, this.isNum) );
             }
         }
