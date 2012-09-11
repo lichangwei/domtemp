@@ -1,6 +1,6 @@
 ﻿**domtemp，一个简单的基于DOM的Javascript模板引擎，仅仅需要节点或者属性中引入{{}}或者${{}}，适合需要复用DOM节点的Web App网站。最大限度地减少绑定事件解除事件的次数。**  
 # API：  
-**new dt(node, opt)**  
+**dt(node, opt)**  
 @param node: DOM节点，必选。  
 @param opt: 对象，可选。比如{ thisp: XXObj, enable: "enable-msg", once: true } 所有可选参数。  
 &nbsp;&nbsp;&nbsp;&nbsp;可以给某些占位符指定固定的值或者特殊的处理函数，用法详见Q && A部分。  
