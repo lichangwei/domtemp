@@ -1,4 +1,4 @@
-﻿**domtemp，一个简单的基于DOM的Javascript模板引擎，仅仅需要节点或者属性中引入{{}}或者${{}}，适合需要复用DOM节点的Single Page App（SPA）网站。配合事件代理，**  
+﻿**domtemp，一个简单的基于DOM的Javascript模板引擎，仅仅需要节点或者属性中引入{{}}或者${{}}，适合需要复用DOM节点的Web App网站。最大限度地减少绑定事件解除事件的次数。**  
 # API：  
 **new dt(node, opt)**  
 @param node: DOM节点，必选。  
@@ -29,35 +29,27 @@
 1. Q：在创建模板的时候，怎样使用第二个参数（opt）？  
 A： 如果占位符的值是固定的，在模板创建以后就不会再改变，并且在调用fill方法时，不需要再次填充该值。比如在国际化过程中，label值仅仅跟语言有关，此时可以使用{genderLabel: "Gender"}来设置此label值。  
 如果填充的值需要经过某种处理才能适应当前页面，比如填充的数据中gender的值是"m"，"f"（此数据直接来自数据库），但是页面需要显示的是"Male"，"Femal"。此时设置opt对象  
-
-
-    {  
-        gender: function( gender, data ){  
-            return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );  
-        }  
-    }
+{   
+&nbsp;&nbsp;&nbsp;&nbsp;gender: function( gender, data ){  
+&nbsp;&nbsp;&nbsp;&nbsp;	return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );  
+&nbsp;&nbsp;&nbsp;&nbsp;}  
+}  
 
 2. Q：如何编写合适的html文本？  
 A：当前，**domtemp占用一个自定义节点属性each。**  
 **each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
 拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息：  
-
-
-    <div each="achievement">  
-        <li>{{.}}</li>  
-        <div>No Achievement.</div>  
-    <div>    
+&lt;div each="achievement"&gt;  
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;{{.}}&lt;/li&gt;  
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;No Achievement.&lt;/div&gt;  
+&lt;div&gt;    
 以上是each的默认行为，可以在创建模板时使用opt指定特殊实现。如：  
-
-    
-    archievements: function( archs, data ){  
-        var fragment = document.createDocumentFragment();  
-        for( var i = 0; i < archs.length; i++ ){  
-            fragment.appendChild( $("&lt;li&gt;", {"text": archs[i], "class": i % 2 ? "odd" : "even" })[0] );  
-        }  
-        if( archs.length === 0 ) fragment.appendChild( $("&lt;div&gt;", {"text": "No Archievement."})[0] );  
-        return fragment;  
-    }  
-**支持{{}}和${{}}两种占位符格式**，其中，如果后者用于文本节点中，则可以作为DOM节点（jquery对象也可以）的占位符。如以下所示：  
-    
-    <div>Avatar: ${{img}}</div>  ---> fill( {img: $("<img>")} ) ---> <div>Avatar: <img></div>
+archievements: function( archs, data ){  
+&nbsp;&nbsp;&nbsp;&nbsp;var fragment = document.createDocumentFragment();  
+&nbsp;&nbsp;&nbsp;&nbsp;for( var i = 0; i < archs.length; i++ ){  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fragment.appendChild( $("&lt;li&gt;", {"text": archs[i], "class": i % 2 ? "odd" : "even" })[0] );  
+&nbsp;&nbsp;&nbsp;&nbsp;}  
+&nbsp;&nbsp;&nbsp;&nbsp;if( archs.length === 0 ) fragment.appendChild( $("&lt;div&gt;", {"text": "No Archievement."})[0] );  
+&nbsp;&nbsp;&nbsp;&nbsp;return fragment;  
+}  
+**支持{{}}和${{}}两种占位符格式**，其中，如果后者用于文本节点中，则可以作为DOM节点（jquery也可以）的占位符。如以下所示：  
