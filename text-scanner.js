@@ -51,7 +51,7 @@ function scanText(dto, node, phs){
             },
             clean: function(){
                 var now = this._now;
-                parent.replaceChild( this._empty, dt.util.isArray(now) ? now[0] : now );
+                addNode(parent, dt.util.isArray(now) ? now[0] : now, this._empty);
                 removeNode(this._now);
                 this._now = this._empty;
             },
@@ -79,11 +79,12 @@ function textNode(text){
 function removeNode(node){
     if( dt.util.isArray(node) ){
         var parnet = node[0].parentNode;
-        for(var i = 0; i < now.length; i++){
+        for(var i = 0; i < node.length; i++){
             parent.removeChild( node[i] );
         }
     }else{
-        node.parentNode.removeChild(node);
+        var parent = node.parentNode;
+        parent && parent.removeChild(node);
     }
 }
 

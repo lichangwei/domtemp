@@ -34,7 +34,7 @@ function scanAttr(dto, node, phs){
                         setAttribute(node, name, val);
                     },
                     clean: function(){
-                        var val = this._ori.replace(regex, '');
+                        var val = this._ori.replace(dt.opt('regexp'), '');
                         setAttribute(node, name, val);
                     },
                     _ori: _ori,
