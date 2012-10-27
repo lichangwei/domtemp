@@ -16,25 +16,18 @@ function scanLoop(dto, node, phs){
     var field = node.getAttribute('each');
     if(!field) return;
     
-    var subdt = dto._subdt;
-    var children = node.children;
-    var _dt = subdt[field] = {
-        item: children['0'],
-        empty: children['1'],
-        items: []
-    };
     dto.addHandler(field, {
-        fill: function(val){
+        fill: function( val ){
             this.clean();
             if(!val || val.length ===0){
-                _dt.empty && node.appendChild(_dt.empty);
+                this.empty && node.appendChild(this.empty);
             }else{
                 for(var i = 0, len = val.length; i < len; i++){
-                    var item = _dt.items[i];
+                    var item = this.items[i];
                     if(!item){
-                        var clone = _dt.item.cloneNode(true);
-                        dt.util.isIE && (clone.innerHTML = _dt.item.innerHTML);
-                        item = _dt.items[i] = new dt(clone);
+                        var clone = this.item.cloneNode(true);
+                        dt.util.isIE && (clone.innerHTML = this.item.innerHTML);
+                        item = this.items[i] = new dt(clone);
                     }
                     item.fill( val[i] );
                     node.appendChild(item.node);
@@ -42,14 +35,15 @@ function scanLoop(dto, node, phs){
             }
         },
         clean: function(){
-            for(var i = node.childNodes.length - 1; i >= 0; i--){
-                node.removeChild(node.childNodes[i]);
-            }
-            for(var i = 0, len = _dt.items.length; i < len; i++){
-                _dt.items[i].clean();
-            }
-        }
+            node.innerHTML = '';
+        },
+        item: node.children[0],
+        empty: node.children[1],
+        items: []
     });
+
+    // force to scan it's children node.
+    return false;
 }
 
 })(dt);

@@ -50,8 +50,6 @@ test('create-alias', function(){
 
 test('create-opt', function(){
     var $node = $('.opt > div');
-    var temp = dt($node).clean();
-    
     var genders = { 'm': 'Male', 'f': 'Female' };
     var user = { 'lastName': 'bu', 'firstName': 'feng', 'gender': 'm', 'age': 26 };
     
@@ -64,7 +62,7 @@ test('create-opt', function(){
         },
         'labelGender': 'Gender',
         'labelName': 'Name'
-    });
+    }).clean();
     temp.fill( user );
     sameIgnoreCase($node.html().replace(/\s*/g, ''), '<div>Name:bufeng</div><div>Gender:Male</div><div>Age:26</div>' );
 });

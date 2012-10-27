@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Form Tester</title>
-    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" href="bootstrap.css">
     <style type="text/css">
         #user-info{
             margin-top: 20px;
@@ -92,44 +92,44 @@
     <input name="reset" type="button" value="恢复" class="btn">
     <input name="clean" type="button" value="清空" class="btn">
 </div>
-<script src="../../base/jquery-1.7.2.js" type="text/javascript"></script>
-<script src="../domtemp.js" type="text/javascript"></script>
-<script src="../form-scanner.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+<script src="../domtemp.js"></script>
+<script src="../form-scanner.js"></script>
 <script type="text/javascript">
 $(function(){
 
     var user = { 
-        name: "sofosogo",
+        name: 'sofosogo',
         gender: 0,
         age: 24,
-        desc:"SE",
+        desc:'SE',
         details:{
-            language: ["Chinese", "English"],
-            school: "HFUT",
-            sports: ["Basketball", "PingPong"]
+            language: ['Chinese', 'English'],
+            school: 'HFUT',
+            sports: ['Basketball', 'PingPong']
         },
         confirmed: 1
     };
-    var form = dt(document.getElementById("user-info"));
+    var form = dt(document.getElementById('user-info'));
     form.fill(user);
     
-    $("input[name=fetch]").click(function(){
+    $('input[name=fetch]').click(function(){
         display( form.fetch() );
     });
     
-    $("input[name=reset]").click(function(){
+    $('input[name=reset]').click(function(){
         form.fill( user );
     });
     
-    $("input[name=clean]").click(function(){
+    $('input[name=clean]').click(function(){
         form.clean();
     });
     
     function display( data ){
-        if( typeof console !== "undefined" && console.log ){
+        if( typeof console !== 'undefined' && console.log ){
             console.log( data );
         }
-        if( typeof JSON !== "undefined" && JSON.stringify ){
+        if( typeof JSON !== 'undefined' && JSON.stringify ){
             alert( JSON.stringify(data) );
         }else{
             alert( data );

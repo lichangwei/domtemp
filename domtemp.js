@@ -80,7 +80,7 @@ dt.prototype = {
     clean: function(){
         this._hide();
         for(var field in this._phs){
-            delete this._phs[field].val;
+            this._phs[field].val = void 0;
             var handlers = this._phs[field].handlers;
             for(var i = 0; i < handlers.length; i++){
                 handlers[i].clean();
@@ -150,10 +150,13 @@ dt.prototype = {
 function scan(dto, node, phs){
     // only scan text node or element node
     if(node.nodeType !== 1 && node.nodeType !== 3) return;
+    // continue to scan children node, default is true, until set to forbidden.
+    var goon = true;
     for(var i = 0;  i < scanners.length; i++){
-        scanners[i].scan(dto, node, phs);
+        var result = scanners[i].scan(dto, node, phs);
+        if( result === false ) goon = false;
     }
-    scanChildren(dto, node, phs);
+    goon && scanChildren(dto, node, phs);
 }
 
 function scanChildren(dto, node, phs){

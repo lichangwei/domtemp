@@ -36,22 +36,17 @@ function scanText(dto, node, phs){
             fill: function( val ){
                 if( this.convert ) val = this.convert(val);
                 if( val && val.jquery ){
-                    val = $.map(val.toArray(), function(it){return it;});
+                    val = val.get();
                 };
                 if( val && val.nodeType !== 1 && !dt.util.isArray(val) || !has$ ){
                     val = textNode(val);
                 }
-                var current = this._now;
-                if( dt.util.isArray(current) ){
-                    current = current[0];
-                }
-                addNode(parent, current, val);
+                addNode(parent, this._now, val);
                 removeNode(this._now);
                 this._now = val;
             },
             clean: function(){
-                var now = this._now;
-                addNode(parent, dt.util.isArray(now) ? now[0] : now, this._empty);
+                addNode(parent, this._now, this._empty);
                 removeNode(this._now);
                 this._now = this._empty;
             },
@@ -82,18 +77,21 @@ function removeNode(node){
         for(var i = 0; i < node.length; i++){
             parent.removeChild( node[i] );
         }
-    }else{
+    }else if( node ){
         var parent = node.parentNode;
         parent && parent.removeChild(node);
     }
 }
 
 function addNode(parent, child, val){
+    if( dt.util.isArray(child) ){
+        child = child[0];
+    }
     if( dt.util.isArray(val) ){
         for( var i = 0; i < val.length; i++){
             parent.insertBefore(val[i], child);
         }
-    }else if(val){
+    }else if( val ){
         parent.insertBefore(val, child);
     }
 }
