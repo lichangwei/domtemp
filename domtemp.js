@@ -90,10 +90,11 @@ dt.prototype = {
     },
     fetch: function(){
         var data = {};
+        var undef = void 0;
         for(var field in this._phs){
             var phs = this._phs[field];
             var handlers = phs.handlers;
-            var dat;
+            var dat = undef;
             for(var i = 0; i < handlers.length; i++){
                 if(handlers[i].fetch){
                     dat = handlers[i].fetch();
@@ -103,7 +104,9 @@ dt.prototype = {
                     break;
                 }
             }
-            assemble(data, field, dat);
+            if(dat !== undef){
+                assemble(data, field, dat);
+            }
         }
         return data;
     },
