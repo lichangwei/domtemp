@@ -42,12 +42,8 @@ function scanFormElements(dto, node, phs){
 function isFormField(node){
     if( !node.tagName ) return false;
     var tagName = node.tagName.toLowerCase();
-    if(tagName === 'input' || tagName === 'textarea' || tagName === 'select'){
-        var type = node.type;
-        return type !== 'image' && type !== 'file' && type !== 'button' 
-            && type !== 'reset' && type !== 'submit';
-    }
-    return false;
+    return ('input textarea select'.indexOf( tagName ) !== -1)
+        && ('image file button reset submit'.indexOf(node.type) === -1);
 }
 
 var protos = {};
