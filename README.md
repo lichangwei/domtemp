@@ -31,11 +31,11 @@ A： 如果占位符的值是固定的，在模板创建以后就不会再改变
 如果填充的值需要经过某种处理才能适应当前页面，比如填充的数据中gender的值是"m"，"f"（此数据直接来自数据库），但是页面需要显示的是"Male"，"Femal"。此时设置opt对象
 
 ``` js
-    {
-        gender: function( gender, data ){
-            return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );
-        }
+  {
+    gender: function( gender, data ){
+      return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );
     }
+  }
 ```
 
 2. Q：如何编写合适的html文本？  
@@ -45,8 +45,8 @@ A：当前，**domtemp占用一个自定义节点属性each。**
 
 ``` html 
 <div each="achievement">
-    <li>{{.}}</li>
-    <div>No Achievement.</div>
+  <li>{{.}}</li>
+  <div>No Achievement.</div>
 </div>
 ```
 
@@ -54,12 +54,12 @@ A：当前，**domtemp占用一个自定义节点属性each。**
   
 ``` js
 archievements: function( archs, data ){
-    var fragment = document.createDocumentFragment();
-    for( var i = 0; i < archs.length; i++ ){
-        fragment.appendChild( $("<li>", {"text": archs[i], "class": i % 2 ? "odd" : "even" })[0] );
-    }
-    if( archs.length === 0 ) fragment.appendChild( $("<div>", {"text": "No Archievement."})[0] );
-    return fragment;
+  var fragment = document.createDocumentFragment();
+  for( var i = 0; i < archs.length; i++ ){
+    fragment.appendChild( $("<li>", {"text": archs[i], "class": i % 2 ? "odd" : "even" })[0] );
+  }
+  if( archs.length === 0 ) fragment.appendChild( $("<div>", {"text": "No Archievement."})[0] );
+  return fragment;
 }
 ```
 
