@@ -6,7 +6,7 @@ require('webtools')
     '../attr-scanner.js',
     '../text-scanner.js',
     '../form-scanner.js',
-    '../loop-scanner.js',
+    '../loop-scanner.js'
   ],
   'output': 'domtemp-min.js'
   });

@@ -42,7 +42,7 @@ function scanLoop(dto, node, phs){
     items: []
   });
 
-  // force to scan it's children node.
+  // stop scanning it's children node.
   return false;
 }
 

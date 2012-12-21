@@ -58,7 +58,7 @@ protos.normal.prototype = {
   fetch: function(){
     return toNumber(this.nodes.value, this.isNum);
   }
-}
+};
 
 protos.radio = function(){};
 protos.radio.prototype = {
@@ -125,7 +125,7 @@ protos.checkbox.prototype = {
     if( len === 1 ) return arr[0];
     return arr;
   }
-}
+};
 
 protos['select-multiple'] = function(){};
 protos['select-multiple'].prototype = {
@@ -162,7 +162,7 @@ protos['select-multiple'].prototype = {
     }
     return arr;
   }
-}
+};
 
 function toNumber( val, isNum ){
   isNum && ( val = parseInt(val) );
