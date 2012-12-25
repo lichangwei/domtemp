@@ -34,7 +34,7 @@ dt.scanner = {
       }
     }
   }
-}
+};
 
 dt.opt = function(k, v){
   if(v !== void 0){
