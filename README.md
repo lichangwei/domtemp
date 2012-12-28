@@ -19,11 +19,6 @@
 将所有占位符节点或属性去掉，文字清空。  
 @return template，返回自身。  
 
-**template.opt(k, v)**  
-创建模板以后再追加一些处理函数等。  
-@k 对象或者字符串 必选。若为对象，则将k的属性方法拷贝至opt中。
-@v 任何值，可选。若k为字符串，则将kv键值对拷贝至opt中。  
-@return template，返回自身。  
 
 # Q && A
 1. Q：在创建模板的时候，怎样使用第二个参数（opt）？  
@@ -39,15 +34,14 @@ A： 如果占位符的值是固定的，在模板创建以后就不会再改变
 ```
 
 2. Q：如何编写合适的html文本？  
-A：当前，**domtemp占用一个自定义节点属性each。**  
-**each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
+A: **data-each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
 拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息：
 
 ``` html 
-<div each="achievement">
+<ul each="achievement">
   <li>{{.}}</li>
-  <div>No Achievement.</div>
-</div>
+  <li class="no-item">No Achievement.</li>
+</ul>
 ```
 
 以上是each的默认行为，可以在创建模板时使用opt指定特殊实现。如：
@@ -61,10 +55,4 @@ archievements: function( archs, data ){
   if( archs.length === 0 ) fragment.appendChild( $("<div>", {"text": "No Archievement."})[0] );
   return fragment;
 }
-```
-
-**支持{{}}和${{}}两种占位符格式**，其中，如果后者用于文本节点中，则可以作为DOM节点（jquery对象也可以）的占位符。如以下所示：
-  
-``` html
-<div>Avatar: ${{img}}</div>  ---> fill( {img: $("<img>")} ) ---> <div>Avatar: <img></div>
 ```

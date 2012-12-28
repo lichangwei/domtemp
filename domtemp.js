@@ -75,9 +75,6 @@ DomTemp.prototype = {
     }
     return this.show();
   },
-  clone: function(){
-    return new DomTemp(this._clone, this.opts);
-  },
   hide: function(){
     var node = this.node;
     // remember its parentNode for append to dom when showing.
