@@ -22,7 +22,7 @@ dt.scanners.push(scanAttrs);
 
 function handleAttr(template, node, nodeName, nodeValue){
   var holders = [];
-  nodeValue.replace(dt.regexp, function(match, has$, field, exp, startIdx){
+  nodeValue.replace(dt.regexp, function(match, field, exp, startIdx){
     holders.push({
       field: field,
       match: match,
@@ -42,7 +42,7 @@ function handleAttr(template, node, nodeName, nodeValue){
       }
       this.setAttribute(node, nodeName, real);
     },
-    clean: function(){
+    clear: function(){
       this.setAttribute(node, nodeName, '');
     },
     setAttribute: attributeSetter[nodeName] || attributeSetter['*'],

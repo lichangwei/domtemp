@@ -8,16 +8,16 @@ var DomTemp = window.dt = function(node, opts){
   if(!(this instanceof DomTemp)){
     return new DomTemp(node, opts);
   }
-  setUp(this, node, opts);
+  setUp(this, node, opts || {});
   scanNode(this, this.node, this.placeholders);
 };
 
-DomTemp.regexp  = /(\$?)\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
+DomTemp.regexp  = /\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
 DomTemp.scanners = [];
 DomTemp.isIE = navigator.userAgent.indexOf('MSIE') >= 0;
 
 DomTemp.convert = function(field, exp){
-  return new Function(field, 'return ' + exp);
+  return new Function('val', 'return ' + exp);
 };
 DomTemp.getValue = function(template, field, convert, data, pool){
   var value = pool[field];
@@ -64,19 +64,19 @@ DomTemp.prototype = {
     }
     return data;
   },
-  clean: function(){
+  clear: function(){
     if( this.data ){
       this.data.length = 0;
     }
     this.hide();
     for(var i = 0, len = this.handlers.length; i < len; i++){
       var handler = this.handlers[i];
-      handler.clean();
+      handler.clear();
     }
     return this.show();
   },
   clone: function(){
-    return new DomTemp(this.html, this.opts);
+    return new DomTemp(this._clone, this.opts);
   },
   hide: function(){
     var node = this.node;
@@ -104,6 +104,7 @@ function setUp(template, node, opts){
   if(typeof jQuery !== 'undefined' && node instanceof jQuery){
     node = node[0];
   }
+  // @TODO don't support tbody tr etc. tag
   if(typeof node === 'string'){
     container.innerHTML = node;
     html = node;
@@ -121,7 +122,7 @@ function setUp(template, node, opts){
     }
   }
   template.node = node;
-  template.opts = opts || {};
+  template.opts = opts;
   template.html = html;
   template.handlers = [];
 }

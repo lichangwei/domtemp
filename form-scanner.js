@@ -54,7 +54,7 @@ protos.normal.prototype = {
     var val = dt.getValue(this.template, this.field, null, data, pool);
     this.nodes.value = val || '';
   },
-  clean: function(){
+  clear: function(){
     this.nodes.value = '';
   },
   fetch: function(){
@@ -76,7 +76,7 @@ protos.radio.prototype = {
       }
     }
   },
-  clean: function(){
+  clear: function(){
     var nodes = this.nodes,
       len = nodes.length;
     for( var i = 0; i < len; i++ ){
@@ -112,7 +112,7 @@ protos.checkbox.prototype = {
       }
     }
   },
-  clean: function(){
+  clear: function(){
     var nodes = this.nodes,
       len = nodes.length;
     for( var i = 0; i < len; i++ ){
@@ -150,7 +150,7 @@ protos['select-multiple'].prototype = {
       }
     }
   },
-  clean: function(){
+  clear: function(){
     var options = this.nodes.children,
       len = options.length;
     for( var i = 0; i < len; i++ ){

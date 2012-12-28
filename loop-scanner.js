@@ -12,9 +12,9 @@ function scanLoop(template, node){
     template: template,
     node: node,
     fill: handler.fill,
-    clean: handler.clean,
+    clear: handler.clear,
     field: field,
-    item: new dt(node.children[0]),
+    item: node.children[0],
     empty: node.children[1],
     items: []
   });
@@ -28,7 +28,7 @@ dt.scanners.push(scanLoop);
 
 var handler = {
   fill: function(data, pool){
-    this.clean();
+    this.clear();
     var val = dt.getValue(this.template, this.field, null, data, pool);
     if(!val || val.length ===0){
       if(this.empty){
@@ -38,14 +38,14 @@ var handler = {
       for(var i = 0, len = val.length; i < len; i++){
         var item = this.items[i];
         if(!item){
-          item = this.items[i] = this.item.clone();
+          item = this.items[i] = dt(this.item.cloneNode(true), this.template.opts);
         }
         item.fill( val[i] );
         this.node.appendChild(item.node);
       }
     }
   },
-  clean: function(){
+  clear: function(){
     this.node.innerHTML = '';
   }
 };

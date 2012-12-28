@@ -4,7 +4,7 @@
 @param node: DOM节点，必选。  
 @param opt: 对象，可选。比如```{ thisp: XXObj, enable: "enable-msg", once: true }``` 所有可选参数。  
 &nbsp;&nbsp;&nbsp;&nbsp;可以给某些占位符指定固定的值或者特殊的处理函数，用法详见[Q && A](#q--a)部分。  
-@return template，拥有某些特殊方法fill，append，clean，opt）的对象。  
+@return template，拥有某些特殊方法fill，append，clear，opt）的对象。  
 
 **template.fill(data, append)**  
 填充数据。  
@@ -15,7 +15,7 @@
 **template.append(data)**  
 追加数组。作用等同于```template.fill(data, true)```。  
   
-**template.clean()**  
+**template.clear()**  
 将所有占位符节点或属性去掉，文字清空。  
 @return template，返回自身。  
 

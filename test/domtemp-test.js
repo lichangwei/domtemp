@@ -2,7 +2,7 @@
 (function(){
 
 module('common');
-test('create & fill & append & clean', function(){
+test('create & fill & append & clear', function(){
   var node = document.querySelector('.simple > div');
   var temp = dt(node).fill({'class': 'red', 'name': 'bufeng', width: 30, height: 40});
 
@@ -17,9 +17,9 @@ test('create & fill & append & clean', function(){
   equal(node.getAttribute('style'), 'width: 50px; height: 40px;', 'style');
   equal(node.children[0].innerHTML, 'bufeng bufeng',              'innerHTML');
 
-  temp.clean();
+  temp.clear();
 
-  equal(node.className,             '', 'class ------------ clean');
+  equal(node.className,             '', 'class ------------ clear');
   equal(node.getAttribute('jid'),   '', 'jid' );
   equal(node.style.cssText,         '', 'style');
   equal(node.children[0].innerHTML, '', 'innerHTML');
@@ -103,7 +103,7 @@ test('fill a loop', function(){
 
 test('form', function(){
   var $node = $('.form > form');
-  var temp = dt($node).clean();
+  var temp = dt($node).clear();
   var data = {
     name: 'sofosogo',
     gender: 0,
