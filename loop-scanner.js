@@ -20,13 +20,17 @@ function scanLoop(dto, node, phs){
     fill: function( val ){
       this.clean();
       if(!val || val.length ===0){
-        this.empty && node.appendChild(this.empty);
+        if( this.empty ){
+          node.appendChild(this.empty);
+        }
       }else{
         for(var i = 0, len = val.length; i < len; i++){
           var item = this.items[i];
           if(!item){
             var clone = this.item.cloneNode(true);
-            dt.util.isIE && (clone.innerHTML = this.item.innerHTML);
+            if( dt.util.isIE ){
+              clone.innerHTML = this.item.innerHTML;
+            }
             item = this.items[i] = new dt(clone);
           }
           item.fill( val[i] );

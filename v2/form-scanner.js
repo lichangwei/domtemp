@@ -172,7 +172,9 @@ protos['select-multiple'].prototype = {
 };
 
 function toNumber( val, isNum ){
-  isNum && ( val = parseInt(val) );
+  if( isNum ){
+    val = parseInt(val, 10);
+  }
   // val !== val <==> typeof val === 'number' && isNaN(val)
   return val !== val ? NaN : val;
 }

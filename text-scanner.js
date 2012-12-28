@@ -37,7 +37,7 @@ function scanText(dto, node, phs){
         if( this.convert ) val = this.convert(val);
         if( val && val.jquery ){
           val = val.get();
-        };
+        }
         if( val && val.nodeType !== 1 && !dt.util.isArray(val) || !has$ ){
           val = textNode(val);
         }
@@ -54,7 +54,7 @@ function scanText(dto, node, phs){
       _now: splited,
       _empty: textNode('')
     };
-    if(exp) handler.convert = convert(field, exp);
+    if(exp) handler.convert = dt.convert(field, exp);
     dto.addHandler(field, handler);
     parent.insertBefore(splited, node);
     idx = startIdx + match.length;
@@ -78,8 +78,10 @@ function removeNode(node){
       parent.removeChild( node[i] );
     }
   }else if( node ){
-    var parent = node.parentNode;
-    parent && parent.removeChild(node);
+    parent = node.parentNode;
+    if( parent ){
+      parent.removeChild(node);
+    }
   }
 }
 

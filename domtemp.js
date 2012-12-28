@@ -48,6 +48,9 @@ dt.util = {
     var toString = Object.prototype.toString;
     return obj && toString.call(obj) === '[object Array]';
   },
+  convert: function(field, exp){
+    return new Function('v', 'return ' + exp);
+  },
   isIE: navigator.userAgent.indexOf('MSIE') >= 0
 };
 
@@ -115,7 +118,7 @@ dt.prototype = {
       this._opts[k] = v;
     }else if(k){
       for(var i in k){
-        opt[i] = k[i];
+        this._opts[i] = k[i];
       }
     }
     return this;
@@ -159,7 +162,9 @@ function scan(dto, node, phs){
     var result = scanners[i].scan(dto, node, phs);
     if( result === false ) goon = false;
   }
-  goon && scanChildren(dto, node, phs);
+  if( goon ){
+    scanChildren(dto, node, phs);
+  }
 }
 
 function scanChildren(dto, node, phs){
@@ -177,13 +182,9 @@ function scanChildren(dto, node, phs){
       children.push(child);
     }
   }
-  for(var i = 0; i < length; i++){
+  for(i = 0; i < length; i++){
     scan(dto, children[i], phs);
   }
-}
-
-function convert(field, exp){
-  return new Function('v', 'return ' + exp);
 }
 
 var container = document.createElement('body');

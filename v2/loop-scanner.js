@@ -38,7 +38,7 @@ var handler = {
       for(var i = 0, len = val.length; i < len; i++){
         var item = this.items[i];
         if(!item){
-          item = this.items[i] = this.item.clone();console.log(item.node.outerHTML)
+          item = this.items[i] = this.item.clone();
         }
         item.fill( val[i] );
         this.node.appendChild(item.node);

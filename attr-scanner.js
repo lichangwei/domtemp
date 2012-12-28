@@ -41,7 +41,7 @@ function scanAttr(dto, node, phs){
           _ori: _ori,
           _phs: _phs
         };
-      if(exp) ph.convert = convert(field, exp);
+      if(exp) ph.convert = dt.convert(field, exp);
       _phs.push( ph );
       dto.addHandler(field, handler);
     });

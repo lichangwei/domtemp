@@ -89,14 +89,16 @@ protos.radio.prototype = {
       }
     }
   }
-}
+};
 
 protos.checkbox = function(){};
 protos.checkbox.prototype = {
   fill: function( val ){
-    var nodes = this.nodes,
-      len = nodes.length;
-    !dt.util.isArray( val ) && ( val = [val] );
+    var nodes = this.nodes;
+    var len = nodes.length;
+    if( !dt.util.isArray(val) ){
+      val = [val];
+    }
     for(var i = 0; i < len; i++){
       nodes[i].checked = false;
       for(var j = 0; val && j < val.length; j++){
@@ -165,7 +167,9 @@ protos['select-multiple'].prototype = {
 };
 
 function toNumber( val, isNum ){
-  isNum && ( val = parseInt(val) );
+  if( isNum ){
+    val = parseInt(val, 10);
+  }
   // val !== val <==> typeof val === 'number' && isNaN(val)
   return val !== val ? NaN : val;
 }
