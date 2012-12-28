@@ -5,62 +5,84 @@
 
 'use strict';
 
-dt.scanner.add({
-  scan: scanAttr,
-  name: 'attr'
-});
+function scanAttrs(template, node){
+  var dataset = isDatasetSupported ? node.dataset : getDataset(node);
+  for(var nodeName in dataset){
+    var nodeValue = dataset[nodeName];
+    if(typeof nodeValue !== 'string') continue;
+    var handler = handleAttr(template, node, nodeName, dataset[nodeName]);
+    if( handler ){
+      node.removeAttribute('data-' + nodeName);
+      template.handlers.push(handler);
+    }
+  }
+}
 
-function scanAttr(dto, node, phs){
-  if(node.nodeType !== 1) return ;
-  
+dt.scanners.push(scanAttrs);
+
+function handleAttr(template, node, nodeName, nodeValue){
+  var holders = [];
+  nodeValue.replace(dt.regexp, function(match, has$, field, exp, startIdx){
+    holders.push({
+      field: field,
+      match: match,
+      convert: exp ? dt.convert(field, exp) : void 0
+    });
+  });
+  if(holders.length === 0){
+    return ;
+  }
+  var handler = {
+    fill: function(data, pool){
+      var real = nodeValue;
+      for(var i = 0; i < holders.length; i++){
+        var holder = holders[i];
+        var val = dt.getValue(this.template, holder.field, holder.convert, data, pool);
+        real = real.replace(holder.match, val);
+      }
+      this.setAttribute(node, nodeName, real);
+    },
+    clean: function(){
+      this.setAttribute(node, nodeName, '');
+    },
+    setAttribute: attributeSetter[nodeName] || attributeSetter['*'],
+    template: template
+  };
+  return handler;
+}
+
+var root = document.documentElement;
+
+var isDatasetSupported = !!root.dataset;
+
+function getDataset( node ){
   var attrs = node.attributes;
+  var map = {};
   for(var i = 0, len = attrs.length; i < len; i++){
     var attr = attrs[i];
-    var _ori = attr.nodeValue;
-    var _phs = [];
-    if(typeof _ori !== 'string') continue;
-    _ori.replace(dt.opt('regexp'), function(match, has$, field, exp, startIdx){
-      var ph = {f: field, m: match},
-        name = alias[attr.nodeName] || attr.nodeName,
-        handler = {
-          fill: function(v){
-            var val = this._ori, ph, _tm;
-            for(var i = 0; i < this._phs.length; i++){
-              ph = this._phs[i];
-              _tm = phs[ph.f].val;
-              if( ph.convert )
-                _tm = ph.convert( _tm );
-              val = val.replace(ph.m, _tm||'');
-            }
-            setAttribute(node, name, val);
-          },
-          clean: function(){
-            var val = this._ori.replace(dt.opt('regexp'), '');
-            setAttribute(node, name, val);
-          },
-          _ori: _ori,
-          _phs: _phs
-        };
-      if(exp) ph.convert = dt.convert(field, exp);
-      _phs.push( ph );
-      dto.addHandler(field, handler);
-    });
+    var name = attr.nodeName;
+    if(name.indexOf('data-') === 0){
+      map[name.substr(5)] = attr.nodeValue;
+    }
   }
+  return map;
 }
 
-var alias = {
-  'imgsrc': 'src',
-  'styl': 'style'
+var attributeSetter = {
+  'value': 'innerHTML' in root ? function(node, name, value){
+      node.innerHTML = value;
+    } : function(node, name, value){
+      node.textContent = value;
+    },
+  'style': function(node, name, value){
+    node.style.cssText = value;
+  },
+  'class': function(node, name, value){
+    node.className = value;
+  },
+  '*': function(node, name, value){
+    node.setAttribute(name, value);
+  }
 };
-
-function setAttribute(node, attr, val){
-  if(attr === 'class'){
-    node.className = val;
-  }if((attr === 'style') && dt.util.isIE && val){
-    node.style.cssText = val;
-  }else{
-    node.setAttribute(attr, val);
-  }
-}
 
 })(dt);

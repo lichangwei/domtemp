@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <title>Domtemp Test</title>
-    <link type="text/css" rel="stylesheet" href="../../base/qunit-1.10.0.css"></link>
+    <link type="text/css" rel="stylesheet" href="../../base/qunit-1.10.0.css"/>
   </head>
   <body>
     <h1 id="qunit-header">Domtemp Test</h1>
@@ -15,41 +15,37 @@
     
     <div style="display: none;">
       <div class="simple">
-        <div class="{{class}}_title" styl="width: {{width}}px; height: {{height}}px" jid="{{class}}0{{class}}{{width}}">
-          <p>{{name}} {{name}}</p>
+        <div data-class="{{class}}_title" data-style="width: {{width}}px; height: {{height}}px;" data-jid="{{class}}0{{class}}{{width}}">
+          <p data-value="{{name}} {{name}}"></p>
         </div>
       </div>
       <div class="jquery">
-        <div>name: {{name}}, avatar: ${{img}}, friends: ${{friends}}</div>
+        <p data-value="{{text}}">jquery</p>
       </div>
       <div class="subattr">
         <div>
-          <div>name: {{user.name.first}} {{user.name.last}}</div>avatar: ${{user.img}}
+          <p data-value="name: {{user.name.first}} {{user.name.last}}">name: First-Name Last-Name</p>
         </div>
       </div>
       <div class="opt">
         <div>
-          <div>{{labelName}}:{{name}}</div>
-          <div>{{labelGender}}:{{gender}}</div>
-          <div>Age:{{age}}</div>
-        </div>
-      </div>
-      <div class="alias">
-        <div styl="background: url({{bg}}) no-repeat">
-          <img imgsrc="{{img}}">
+          <p data-value="{{labelName}}: {{name: name.toUpperCase()}}"></p>
+          <p data-value="{{labelGender}}: {{gender}}"></p>
+          <p data-value="Age: {{age}}"></p>
         </div>
       </div>
       <div class="loop">
-        <div each="users">
+        <div data-each="users">
           <div class="user">
-            <div>name: {{name}}</div>
-            <div>phone: 
-              <ul each="phone">
-                <li>{{.}}</li>
+            <div data-value="name: {{name}}">Name: </div>
+            <div>Favorite: 
+              <ul data-each="favorites">
+                <li data-value="{{.}}"></li>
                 <p>X</p>
               </ul>
             </div>
           </div>
+          <p>No users.</p>
         </div>
       </div>
       <div class="form">
@@ -106,7 +102,7 @@
                 <option value="">请选择喜爱的体育项目</option>
                 <option value="Basketball">篮球</option>
                 <option value="Football">足球</option>
-                <option value="PingPong">乒乓球</ption>
+                <option value="PingPong">乒乓球</option>
               </select>
             </div>
           </div>
@@ -119,14 +115,14 @@
         </form>
       </div>
     </div>
+    
+    <script src="../../base/jquery-1.8.2.js"></script>
+    <script src="../../base/qunit-1.10.0.js"></script>
+    <script src="../domtemp.js"></script>
+    <script src="../attr-scanner.js"></script>
+    <script src="../loop-scanner.js"></script>
+    <script src="../form-scanner.js"></script>
+    <script src="domtemp-test.js"></script>
+    
   </body>
-
-  <script src="../../base/jquery-1.8.2.js"></script>
-  <script src="../../base/qunit-1.10.0.js"></script>
-  <script src="../domtemp.js"></script>
-  <script src="../text-scanner.js"></script>
-  <script src="../attr-scanner.js"></script>
-  <script src="../form-scanner.js"></script>
-  <script src="../loop-scanner.js"></script>
-  <script src="domtemp-tester.js"></script>
 </html>

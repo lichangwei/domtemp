@@ -3,145 +3,82 @@
 
 'use strict';
 
-var dt = window.dt = function(node, opts){
-  // below code allow to create dt object without 'new'
-  if(!(this instanceof dt)){
-    return new dt(node, opts);
+var DomTemp = window.dt = function(node, opts){
+  // below code allow to create DomTemp object without 'new'
+  if(!(this instanceof DomTemp)){
+    return new DomTemp(node, opts);
   }
-  this.node = parseNode(node);
-  this._opts = opts || {};
-  this._phs = {};
-  this._subdt = {};
-  scan(this, this.node, this._phs, this._subdt);
+  setUp(this, node, opts);
+  scanNode(this, this.node, this.placeholders);
 };
 
-dt.scanner = {
-  add: function(scanner, index){
-    if(index === void 0){
-      return scanners.push(scanner);
-    }
-    scanners.splice(index, 0, scanner);
-  },
-  remove: function(scanner){
-    if(typeof scanner === 'number'){
-      delete scanners[scanner];
-    }else if(typeof scanner === 'string'){
-      for(var i = 0; i < scanners.length; i++){
-        if(scanners[i].name === scanner){
-          delete scanners[i];
-          return;
-        }
-      }
-    }
+DomTemp.regexp  = /(\$?)\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
+DomTemp.scanners = [];
+DomTemp.isIE = navigator.userAgent.indexOf('MSIE') >= 0;
+
+DomTemp.convert = function(field, exp){
+  return new Function(field, 'return ' + exp);
+};
+DomTemp.getValue = function(template, field, convert, data, pool){
+  var value = pool[field];
+  if( !value ){
+    value = pool[field] = evaluate(data, field);
   }
-};
-
-dt.opt = function(k, v){
-  if(v !== void 0){
-    opts[k] = v;
+  var opt = template.opts[field];
+  if(typeof opt === 'function'){
+    value = opt(value, data);
+  }else if(opt !== void 0){
+    value = opt;
   }
-  return opts[k];
+  if( convert ){
+    value = convert(value);
+  }
+  return value;
 };
 
-dt.util = {
-  isArray: function(obj){
-    var toString = Object.prototype.toString;
-    return obj && toString.call(obj) === '[object Array]';
-  },
-  convert: function(field, exp){
-    return new Function('v', 'return ' + exp);
-  },
-  isIE: navigator.userAgent.indexOf('MSIE') >= 0
-};
-
-var scanners = [];
-var opts = {
-  // match for ${{xx.xx.xx}}, {{xx}} etc.
-  regexp: /(\$?)\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig
-};
-
-dt.prototype = {
+DomTemp.prototype = {
   fill: function(data, append){
-    this._hide();
-    for(var field in this._phs){
-      var handlers = this._phs[field].handlers;
-      var val = evaluate(data, field);
-      var opt = this._opts[field];
-      if(opt !== void 0){
-        val = (typeof opt === 'function') ? opt(val, data) : opt;
-      }
-      this._phs[field].val = val;
-      for(var i = 0; i < handlers.length; i++){
-        handlers[i].fill(val);
-      }
+    if(append && this.data){
+      this.data = merge(this.data, data);
+    }else{
+      this.data = data;
     }
-    return this._show();
+    this.hide();
+    for(var i = 0, len = this.handlers.length; i < len; i++){
+      var handler = this.handlers[i];
+      handler.fill(this.data, {});
+    }
+    return this.show();
   },
   append: function(data){
     return this.fill(data, true);
   },
-  clean: function(){
-    this._hide();
-    for(var field in this._phs){
-      this._phs[field].val = void 0;
-      var handlers = this._phs[field].handlers;
-      for(var i = 0; i < handlers.length; i++){
-        handlers[i].clean();
-      }
-    }
-    return this._show();
-  },
   fetch: function(){
     var data = {};
     var undef = void 0;
-    for(var field in this._phs){
-      var phs = this._phs[field];
-      var handlers = phs.handlers;
-      var dat = undef;
-      for(var i = 0; i < handlers.length; i++){
-        if(handlers[i].fetch){
-          dat = handlers[i].fetch();
-          break;
-        }else if(handlers[i].fetchable){
-          dat = phs.val;
-          break;
-        }
-      }
-      if(dat !== undef){
-        assemble(data, field, dat);
+    for(var i = 0, len = this.handlers.length; i < len; i++){
+      var handler = this.handlers[i];
+      if( handler.fetch ){
+        assemble(data, handler.field, handler.fetch());
       }
     }
     return data;
   },
-  opt: function(k, v){
-    if(typeof k === 'string'){
-      this._opts[k] = v;
-    }else if(k){
-      for(var i in k){
-        this._opts[i] = k[i];
-      }
+  clean: function(){
+    if( this.data ){
+      this.data.length = 0;
     }
-    return this;
-  },
-  addHandler: function(field, handler){
-    if( !this._phs[field] ){
-      this._phs[field] = {handlers: []};
+    this.hide();
+    for(var i = 0, len = this.handlers.length; i < len; i++){
+      var handler = this.handlers[i];
+      handler.clean();
     }
-    this._phs[field].handlers.push(handler);
+    return this.show();
   },
-  getHandlers: function(field){
-    if( !this._phs[field] ){
-      this._phs[field] = {handlers: []};
-    }
-    return this._phs[field].handlers;
+  clone: function(){
+    return new DomTemp(this.html, this.opts);
   },
-  _show: function(){
-    var node = this.node;
-    if( !node._parent ) return this;
-    node._parent.replaceChild(node, node._replace);
-    return this;
-  },
-  _hide: function(){
+  hide: function(){
     var node = this.node;
     // remember its parentNode for append to dom when showing.
     if( !node._parent ) node._parent = node.parentNode;
@@ -150,76 +87,104 @@ dt.prototype = {
     if( !node._replace ) node._replace = document.createElement('p');
     node._parent.replaceChild(node._replace, node);
     return this;
+  },
+  show: function(){
+    var node = this.node;
+    if( node._parent && node._replace){
+      node._parent.replaceChild(node, node._replace);
+    }
+    return this;
   }
 };
 
-function scan(dto, node, phs){
-  // only scan text node or element node
-  if(node.nodeType !== 1 && node.nodeType !== 3) return;
-  // continue to scan children node, default is true, until set to forbidden.
-  var goon = true;
-  for(var i = 0;  i < scanners.length; i++){
-    var result = scanners[i].scan(dto, node, phs);
-    if( result === false ) goon = false;
-  }
-  if( goon ){
-    scanChildren(dto, node, phs);
-  }
-}
-
-function scanChildren(dto, node, phs){
-  // node.childNodes changed by scanText function.
-  // fuck IE, we cannnot use the simpliest way below:
-  // var children = Array.prototype.slice.call( node.childNodes );
-  var childNodes = node.childNodes;
-  var length = childNodes.length;
-  var children = [];
-  var child;
-  for(var i = 0; i < length; i++){
-    child = childNodes[i];
-    var nodeType = child.nodeType;
-    if(nodeType === 1 || nodeType === 3){
-      children.push(child);
-    }
-  }
-  for(i = 0; i < length; i++){
-    scan(dto, children[i], phs);
-  }
-}
-
 var container = document.createElement('body');
-function parseNode(node){
+
+function setUp(template, node, opts){
+  var html;
+  if(typeof jQuery !== 'undefined' && node instanceof jQuery){
+    node = node[0];
+  }
   if(typeof node === 'string'){
     container.innerHTML = node;
-    return container.firstChild;
-  }else if(node.jquery){
-    return node[0];
+    html = node;
+    node = container.children[0];
+    // or node.parentNode is container(impact with prototype.hide function).
+    // If we use container.innerHTML = '', node.innerHTML will also be '' in IE.
+    container.removeChild(node);
+  }else{
+    if( node.outerHTML ){
+      html = node.outerHTML;
+    }else{
+      container.innerHTML = '';
+      container.appendChild(node);
+      html = container.innerHTML;
+    }
   }
-  return node;
+  template.node = node;
+  template.opts = opts || {};
+  template.html = html;
+  template.handlers = [];
 }
 
-function evaluate( ctx, exp ){
-  if( !ctx || !exp ) return null;
-  var fs = exp.split('.'),
-    data = ctx, i;
-  for( i = 0; data && i < fs.length; i++ ){
-    if( fs[i] ) data = data[ fs[i] ];
+var scanners = DomTemp.scanners;
+
+function scanNode(template, node){
+  // only scan element node
+  if(node.nodeType !== 1){
+    return;
   }
-  return data;
+  // continue to scan children node, default is true, until set to false.
+  var needScanChildren = true;
+  for(var i = 0;  i < scanners.length; i++){
+    var result = scanners[i](template, node);
+    if( result === false ) needScanChildren = false;
+  }
+  if( needScanChildren ){
+    scanChildren(template, node);
+  }
+}
+
+function scanChildren(template, node){
+  var children = node.children;
+  for(var i = 0; i < children.length; i++){
+    scanNode(template, children[i]);
+  }
+}
+
+function evaluate(ctx, exp){
+  if(!ctx || !exp) return null;
+  var fields = exp.split('.'),
+    result = ctx, i;
+  for( i = 0; result && i < fields.length; i++ ){
+    if( fields[i] ) result = result[ fields[i] ];
+  }
+  return result;
 }
 
 function assemble(data, field, val){
   if(data && field){
-    var fs = field.split('.');
+    var fields = field.split('.');
     var temp = data;
-    for(var i = 0, len = fs.length; i < len - 1; i++){
-      if(!fs[i]) continue;
-      temp[fs[i]] = temp[fs[i]] || {};
-      temp = temp[fs[i]];
+    for(var i = 0, len = fields.length; i < len - 1; i++){
+      if(!fields[i]) continue;
+      temp[fields[i]] = temp[fields[i]] || {};
+      temp = temp[fields[i]];
     }
-    temp[fs[len-1]] = val;
+    temp[fields[len-1]] = val;
   }
   return data;
+}
+
+function merge(target, obj){
+  if( !target ) target = {};
+  for(var k in obj){
+    if(typeof target[k] === 'object' && typeof obj[k] === 'object'){
+      target[k] = merge(target[k], obj[k]);
+    }else{
+      target[k] = obj[k];
+    }
+  }
+  return target;
 }
 
 })();

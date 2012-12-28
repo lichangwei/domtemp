@@ -4,7 +4,6 @@ require('webtools')
   'input': [
     '../domtemp.js',
     '../attr-scanner.js',
-    '../text-scanner.js',
     '../form-scanner.js',
     '../loop-scanner.js'
   ],

@@ -5,30 +5,31 @@
 
 'use strict';
 
-dt.scanner.add({
-  scan: scanFormElements,
-  name: 'form'
-});
+dt.scanners.push(scanFormElements);
 
-function scanFormElements(dto, node, phs){
-  if(!isFormField(node)) return;
+function scanFormElements(template, node){
+  if( !isFormField(node) ) return;
   var field = node.name;
-  if(!field) return ;
+  if( !field ) return ;
   // var type = node.getAttribute('type');
   var type = node.type;
   var isNum = node.getAttribute('number');
-  var handlers = dto.getHandlers(field);
+
+  var handlers = template.handlers;
   var handler;
   for(var i = 0; i < handlers.length; i++){
-    if(handlers[i].type === type){
+    if(handlers[i].field === field && handlers[i].type === type){
       handler = handlers[i];
     }
   }
   if( !handler ){
     handler = new (protos[type] || protos.normal)();
+    handler.field = field;
     handler.type = type;
-    dto.addHandler(field, handler);
+    handler.template = template;
+    template.handlers.push( handler );
   }
+
   handler.isNum = handler.isNum || type === 'number' || type ==='range' || isNum !== null;
   
   if(type === 'radio' || type === 'checkbox'){
@@ -49,7 +50,8 @@ function isFormField(node){
 var protos = {};
 protos.normal = function(){};
 protos.normal.prototype = {
-  fill: function( val ){
+  fill: function(data, pool){
+    var val = dt.getValue(this.template, this.field, null, data, pool);
     this.nodes.value = val || '';
   },
   clean: function(){
@@ -62,7 +64,8 @@ protos.normal.prototype = {
 
 protos.radio = function(){};
 protos.radio.prototype = {
-  fill: function( val ){
+  fill: function(data, pool){
+    var val = dt.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes,
       len = nodes.length,
       v = '' + val;
@@ -93,10 +96,11 @@ protos.radio.prototype = {
 
 protos.checkbox = function(){};
 protos.checkbox.prototype = {
-  fill: function( val ){
+  fill: function(data, pool){
+    var val = dt.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes;
     var len = nodes.length;
-    if( !dt.util.isArray(val) ){
+    if( !isArray(val) ){
       val = [val];
     }
     for(var i = 0; i < len; i++){
@@ -131,7 +135,8 @@ protos.checkbox.prototype = {
 
 protos['select-multiple'] = function(){};
 protos['select-multiple'].prototype = {
-  fill: function( val ){
+  fill: function(data, pool){
+    var val = dt.getValue(this.template, this.field, null, data, pool);
     var options = this.nodes.children,
       len = options.length;
     for( var i = 0; i < len; i++ ){
@@ -172,6 +177,10 @@ function toNumber( val, isNum ){
   }
   // val !== val <==> typeof val === 'number' && isNaN(val)
   return val !== val ? NaN : val;
+}
+
+function isArray( obj ){
+  return obj && Object.prototype.toString.call(obj) === '[object Array]';
 }
 
 })(dt);
