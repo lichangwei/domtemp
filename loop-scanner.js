@@ -20,7 +20,7 @@ function scanLoop(template, node){
   });
   node.innerHTML = '';
   node.removeAttribute('data-each');
-  // stop scanning it's children node.
+  // return false to stop scanning it's children node.
   return false;
 }
 

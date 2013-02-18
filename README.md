@@ -38,8 +38,8 @@ A: **data-each**是为了显示一个数组数据，比如在玩家成就面板�
 拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息：
 
 ``` html 
-<ul each="achievement">
-  <li>{{.}}</li>
+<ul data-each="achievement">
+  <li data-value="{{.}}"></li>
   <li class="no-item">No Achievement.</li>
 </ul>
 ```

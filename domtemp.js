@@ -1,4 +1,7 @@
-
+/**
+ * @file domtemp.js
+ * @overview
+ */
 (function(){
 
 'use strict';
