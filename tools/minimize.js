@@ -14,7 +14,7 @@ var sources = [
 ];
 var options = {
   outSourceMap: 'domtemp-min.js.map',
-  sourceRoot: 'https://github.com/lichangwei/domtemp/tools'
+  sourceRoot: 'tools'
 };
 
 var output = require('uglify-js').minify(sources, options);
