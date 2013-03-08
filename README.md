@@ -34,12 +34,15 @@ A： 如果占位符的值是固定的，在模板创建以后就不会再改变
 ```
 
 2. Q：如何编写合适的html文本？  
-A: **data-each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
-拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息：
+A: 特殊处理的data-*属性有两个：data-each和data-value。  
+**data-each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
+拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息。  
+**data-value**表示该节点的文本内容，类似innerHTML属性。  
+其他data-*属性都会被设置*属性。如data-class其实就是设置class属性。  
 
 ``` html 
 <ul data-each="achievement">
-  <li data-value="{{.}}"></li>
+  <li data-class="{{className}}" data-value="{{name}}"></li>
   <li class="no-item">No Achievement.</li>
 </ul>
 ```
