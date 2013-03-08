@@ -15,6 +15,8 @@ var DomTemp = window.dt = function(node, opts){
   scanNode(this, this.node, this.placeholders);
 };
 
+DomTemp.version = '1.0';
+
 DomTemp.regexp  = /\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
 DomTemp.scanners = [];
 DomTemp.isIE = navigator.userAgent.indexOf('MSIE') >= 0;
