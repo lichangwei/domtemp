@@ -1,4 +1,4 @@
-**domtemp，一个简单的基于DOM的Javascript模板引擎，仅仅需要节点或者属性中引入{{}}或者${{}}，适合需要复用DOM节点的Web App网站。最大限度地减少绑定事件解除事件的次数。**  
+**domtemp，一个简单的基于DOM的Javascript模板引擎，在任意节点的data-*属性中引入{{}}即可，适合需要复用DOM节点的Web App网站。最大限度地减少绑定事件解除事件的次数。**  
 # API：  
 **dt(node, opt)**  
 @param node: DOM节点，必选。  
@@ -56,3 +56,7 @@ archievements: function( archs, data ){
   return fragment;
 }
 ```
+
+# Change Log
+
+### 1.0 (Initial version)
