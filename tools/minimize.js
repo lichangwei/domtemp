@@ -1,6 +1,7 @@
 
 /*
  * Environment: node / uglify-js(version >=2.2.5)
+ * npm install uglify-js -g
  */
 var fs = require('fs');
 
