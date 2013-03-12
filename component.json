@@ -1,0 +1,6 @@
+{
+  "name": "domtemp",
+  "version": "1.0.0",
+  "main": ["./domtemp-min.js"],
+  "dependencies": {}
+}
