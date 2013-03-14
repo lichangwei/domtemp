@@ -1,4 +1,4 @@
 domtemp
 =======
 
-Dom based javascript template engine
+A dom based javascript template engine
