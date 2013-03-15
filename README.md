@@ -19,6 +19,23 @@
 将所有占位符节点或属性去掉，文字清空。  
 @return template，返回自身。  
 
+**template.fetch()**  
+获取模板中的form元素的值，封装为一个javascript对象并返回。  
+@return javascript对象  
+
+# Download: 
+- [Download the zip package.](https://nodeload.github.com/lichangwei/domtemp/legacy.zip/master) 
+- Using bower: [How to use bower](https://github.com/twitter/bower)  
+``` javascript
+{
+  "name": "name of your project",
+  "version": "version of your project",
+  "main": ["main javascript file of your project"],
+  "dependencies": {
+    "domtemp": "1.0.0" // the latest stable version is 1.0.0
+  }
+}
+```
 
 # Q && A
 1. Q：在创建模板的时候，怎样使用第二个参数（opt）？  
@@ -26,11 +43,11 @@ A： 如果占位符的值是固定的，在模板创建以后就不会再改变
 如果填充的值需要经过某种处理才能适应当前页面，比如填充的数据中gender的值是"m"，"f"（此数据直接来自数据库），但是页面需要显示的是"Male"，"Femal"。此时设置opt对象
 
 ``` js
-  {
-    gender: function( gender, data ){
-      return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );
-    }
+{
+  gender: function( gender, data ){
+    return gender === "m" : "Male" : ( gender === "f" ? "Female" : "" );
   }
+}
 ```
 
 2. Q：如何编写合适的html文本？  
