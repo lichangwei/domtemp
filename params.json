@@ -1,7 +1,1 @@
-{
-    "name": "domtemp",
-    "tagline": "A dom-based javascript template engine",
-    "body": "### Samples \r\n * [Fill & clear form & fetch data from form](samples/form.html) \r\n ### API \r\n [Go to API](https://github.com/lichangwei/domtemp/blob/master/README.md)",
-    "google": "",
-    "note": "Don't delete this file! It's used internally to help with page regeneration."
-}
+{"name":"domtemp","tagline":"A dom-based javascript template engine","body":"### Samples  \r\n[Fill & clear form & fetch data from form](samples/form.html)  \r\n### API  \r\n[Go to API document](https://github.com/lichangwei/domtemp/blob/master/README.md)  ","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
