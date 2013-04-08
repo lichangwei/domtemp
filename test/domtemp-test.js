@@ -8,13 +8,13 @@ test('create & fill & append & clear', function(){
 
   equal(node.className,             'red_title',                  'class ------------ fill');
   equal(node.getAttribute('jid'),   'red0red30',                  'jid' );
-  equal(node.getAttribute('style'), 'width: 30px; height: 40px;', 'style');
+  equal(node.style.cssText.trim(),  'width: 30px; height: 40px;', 'style');
   equal(node.children[0].innerHTML, 'bufeng bufeng',              'innerHTML');
 
   temp.append( {'class': 'blue', width: 50} );
   equal(node.className,             'blue_title',                 'class ------------ append');
   equal(node.getAttribute('jid'),   'blue0blue50',                'jid' );
-  equal(node.getAttribute('style'), 'width: 50px; height: 40px;', 'style');
+  equal(node.style.cssText.trim(),  'width: 50px; height: 40px;', 'style');
   equal(node.children[0].innerHTML, 'bufeng bufeng',              'innerHTML');
 
   temp.clear();
@@ -61,7 +61,7 @@ test('create with options & simple convert', function(){
     'gender': 'M',
     'age': 26
   };
-  
+
   var temp = dt(node, {
     'gender': function( val ){
       return genders[val] || 'Unknown';
@@ -97,7 +97,7 @@ test('fill a loop', function(){
   equal(loop.querySelectorAll('li').length, 4);
   equal(loop.querySelectorAll('p').length,  1);
   if(typeof console !== 'undefined' && console.log){
-    console.log(loop.innerHTML);
+    //console.log(loop.innerHTML);
   }
 });
 
@@ -117,7 +117,7 @@ test('form', function(){
     confirmed: 1
   };
   temp.fill(data);
-  
+
   equal($node.find('input[name=name]').val()                   , 'sofosogo');
   equal($node.find('input[name=gender]')[0].checked            , true);
   equal($node.find('input[name=gender]')[1].checked            , false);
@@ -128,7 +128,7 @@ test('form', function(){
   equal($node.find('select[name="details.sports"]').val()[0]   , 'Basketball');
   equal($node.find('select[name="details.sports"]').val()[1]   , 'PingPong');
   equal($node.find('input[name=confirmed]')[0].checked         , true);
-  
+
   var fetched = temp.fetch();
   if(typeof JSON !== 'undefined' && JSON.stringify){
     equal(JSON.stringify(data), JSON.stringify(fetched));

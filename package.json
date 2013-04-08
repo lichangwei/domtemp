@@ -1,0 +1,37 @@
+{
+  "name": "domtemp",
+  "description": "A DOM-based template engine.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Li Chang Wei",
+    "email": "lichangwei@love.com"
+  },
+  "contributors": [
+    {
+      "name": "Li Chang Wei",
+      "email": "lichangwei@love.com"
+    }
+  ],
+  "keywords": [
+    "DOM-based",
+    "template engine"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lichangwei/restjs.git"
+  },
+  "main": "domtemp-min.js",
+  "engines": [
+    "node >= 0.6"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-qunit": "~0.2.1",
+    "grunt-contrib-watch": "~0.3.1"
+  }
+}
