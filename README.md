@@ -51,21 +51,16 @@ A： 如果占位符的值是固定的，在模板创建以后就不会再改变
 ```
 
 2. Q：如何编写合适的html文本？  
-A: 特殊处理的data-*属性有两个：data-each和data-value。  
+A: 特殊处理的data-*属性有4个：data-each, data-value, data-indom和data-display。  
 **data-each**是为了显示一个数组数据，比如在玩家成就面板上显示所有的玩家所有的成就。  
 拥有each属性的节点包含两个个子节点，第一个表示当数组的个数大于0时，用于显示数组数据的模板，第二个用于显示数组个数为0时的信息，可以省略，此时不显示任何信息。  
-**data-value**表示该节点的文本内容，类似innerHTML属性。  
-其他data-*属性都会被设置*属性。如data-class其实就是设置class属性。  
-
 ``` html 
 <ul data-each="achievement">
   <li data-class="{{className}}" data-value="{{name}}"></li>
   <li class="no-item">No Achievement.</li>
 </ul>
 ```
-
 以上是each的默认行为，可以在创建模板时使用opt指定特殊实现。如：
-  
 ``` js
 archievements: function( archs, data ){
   var fragment = document.createDocumentFragment();
@@ -76,7 +71,22 @@ archievements: function( archs, data ){
   return fragment;
 }
 ```
+**data-value**表示该节点的文本内容，类似innerHTML属性。  
+```html
+<p data-value="Your age must be larger than {{age}}."></p>
+```
+**data-indom**表示满足某种条件时，元素才被插入DOM树中。如以下代码表示当age >= 20时p才被插入DOM树中。
+```html
+<p data-indom="{{age: val >= 20;}}">20+</p>
+```
+**data-display**表示满足某种条件时，会将style中display属性设置为空字符串，否则设置为`none`。
+```html
+<p data-display="{{age: val >= 20;}}">20+</p>
+```
+其他data-*属性都会被设置*属性。如data-class其实就是设置class属性。  
+
 
 # Change Log
+### 1.0.2 Add data-indom and data-display, bug fix for IE10.
 ### 1.0.1 use grunt to manage source.
 ### 1.0.0 (Initial version)
