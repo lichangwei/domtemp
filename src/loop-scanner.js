@@ -18,7 +18,10 @@ function scanLoop(template, node){
     empty: node.children[1],
     items: []
   });
-  node.innerHTML = '';
+  // if we use `node.innerHTML = '';`, item.innerHTML and empty.innerHTML will be '' in IE, even if IE10.
+  var range = document.createRange();
+  range.selectNodeContents(node);
+  range.deleteContents();
   node.removeAttribute('data-each');
   // return false to stop scanning it's children node.
   return false;
