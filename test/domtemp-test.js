@@ -136,4 +136,32 @@ test('form', function(){
 
 });
 
+test('data-indom', function(){
+  var $indom = $('#indom');
+  var temp = dt($indom);
+  temp.fill({age: 20});
+  equal($indom.children().length, 1);
+  equal($indom.children()[0].innerHTML, '20+');
+
+  temp.fill({age: 19});
+  equal($indom.children().length, 1);
+  equal($indom.children()[0].innerHTML, '19-');
+});
+
+test('data-display', function(){
+  var $display = $('#display');
+  var temp = dt($display);
+  temp.fill({age: 20});
+  equal($display.children('p:visible').length, 1);
+  equal($display.children('p:visible')[0].innerHTML, '20+');
+  equal($display.children('span:visible').length, 1);
+  equal($display.children('span:visible')[0].innerHTML, '20+');
+
+  temp.fill({age: 19});
+  equal($display.children('p:visible').length, 1);
+  equal($display.children('p:visible')[0].innerHTML, '19-');
+  equal($display.children('span:visible').length, 1);
+  equal($display.children('span:visible')[0].innerHTML, '19-');
+});
+
 })();

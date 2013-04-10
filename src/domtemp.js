@@ -38,6 +38,19 @@ DomTemp.getValue = function(template, field, convert, data, pool){
   }
   return value;
 };
+DomTemp.hideNode = function(node){
+  // remember its parentNode for append to dom when showing.
+  if( !node._parent ) node._parent = node.parentNode;
+  if( !node._parent ) return;
+  // create a p elements to hold its position.
+  if( !node._replace ) node._replace = document.createTextNode('');
+  node._parent.replaceChild(node._replace, node);
+};
+DomTemp.showNode = function(node){
+  if( node._parent && node._replace){
+    node._parent.replaceChild(node, node._replace);
+  }
+};
 
 DomTemp.prototype = {
   fill: function(data, append){
@@ -79,20 +92,11 @@ DomTemp.prototype = {
     return this.show();
   },
   hide: function(){
-    var node = this.node;
-    // remember its parentNode for append to dom when showing.
-    if( !node._parent ) node._parent = node.parentNode;
-    if( !node._parent ) return this;
-    // create a p elements to hold its position.
-    if( !node._replace ) node._replace = document.createElement('p');
-    node._parent.replaceChild(node._replace, node);
+    DomTemp.hideNode(this.node);
     return this;
   },
   show: function(){
-    var node = this.node;
-    if( node._parent && node._replace){
-      node._parent.replaceChild(node, node._replace);
-    }
+    DomTemp.showNode(this.node);
     return this;
   }
 };

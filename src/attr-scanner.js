@@ -52,7 +52,6 @@ function handleAttr(template, node, nodeName, nodeValue){
 }
 
 var root = document.documentElement;
-
 var isDatasetSupported = !!root.dataset;
 
 function getDataset( node ){
@@ -68,7 +67,7 @@ function getDataset( node ){
   return map;
 }
 
-var attributeSetter = {
+var attributeSetter = dt.attributeSetter = {
   'value': 'innerHTML' in root ? function(node, name, value){
       node.innerHTML = value;
     } : function(node, name, value){
@@ -79,6 +78,16 @@ var attributeSetter = {
   },
   'class': function(node, name, value){
     node.className = value;
+  },
+  'indom': function(node, name, value){
+    if(value === 'true'){
+      dt.showNode(node);
+    }else{
+      dt.hideNode(node);
+    }
+  },
+  'display': function(node, name, value){
+    node.style.display = value === 'true' ? '' : 'none';
   },
   '*': function(node, name, value){
     node.setAttribute(name, value);

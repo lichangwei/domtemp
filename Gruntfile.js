@@ -57,6 +57,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-plugin-pkg2cmp');
 
   grunt.registerTask('default', ['pkg2cmp', 'qunit', 'concat', 'uglify']);
-  grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('test', ['qunit']);
 
 };
