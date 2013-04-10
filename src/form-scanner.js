@@ -1,7 +1,7 @@
 /**
  * Scan form elements
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -51,7 +51,7 @@ var protos = {};
 protos.normal = function(){};
 protos.normal.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     this.nodes.value = val || '';
   },
   clear: function(){
@@ -65,7 +65,7 @@ protos.normal.prototype = {
 protos.radio = function(){};
 protos.radio.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes,
       len = nodes.length,
       v = '' + val;
@@ -97,7 +97,7 @@ protos.radio.prototype = {
 protos.checkbox = function(){};
 protos.checkbox.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes;
     var len = nodes.length;
     if( !isArray(val) ){
@@ -136,7 +136,7 @@ protos.checkbox.prototype = {
 protos['select-multiple'] = function(){};
 protos['select-multiple'].prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var options = this.nodes.children,
       len = options.length;
     for( var i = 0; i < len; i++ ){
@@ -183,4 +183,4 @@ function isArray( obj ){
   return obj && Object.prototype.toString.call(obj) === '[object Array]';
 }
 
-})(dt);
+})(dt, dt.util);

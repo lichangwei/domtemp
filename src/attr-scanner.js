@@ -1,7 +1,7 @@
 /**
  * Scan attributes
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -26,7 +26,7 @@ function handleAttr(template, node, nodeName, nodeValue){
     holders.push({
       field: field,
       match: match,
-      convert: exp ? dt.convert(field, exp) : void 0
+      convert: exp ? util.convert(field, exp) : void 0
     });
   });
   if(holders.length === 0){
@@ -37,7 +37,7 @@ function handleAttr(template, node, nodeName, nodeValue){
       var real = nodeValue;
       for(var i = 0; i < holders.length; i++){
         var holder = holders[i];
-        var val = dt.getValue(this.template, holder.field, holder.convert, data, pool);
+        var val = util.getValue(this.template, holder.field, holder.convert, data, pool);
         real = real.replace(holder.match, val);
       }
       this.setAttribute(node, nodeName, real);
@@ -81,9 +81,9 @@ var attributeSetter = dt.attributeSetter = {
   },
   'indom': function(node, name, value){
     if(value === 'true'){
-      dt.showNode(node);
+      util.showNode(node);
     }else{
-      dt.hideNode(node);
+      util.hideNode(node);
     }
   },
   'display': function(node, name, value){
@@ -94,4 +94,4 @@ var attributeSetter = dt.attributeSetter = {
   }
 };
 
-})(dt);
+})(dt, dt.util);

@@ -17,26 +17,41 @@ var DomTemp = window.dt = function(node, opts){
 
 DomTemp.regexp  = /\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
 DomTemp.scanners = [];
-DomTemp.isIE = navigator.userAgent.indexOf('MSIE') >= 0;
 
-DomTemp.convert = function(field, exp){
-  return new Function('val', 'return ' + exp);
-};
-DomTemp.getValue = function(template, field, convert, data, pool){
-  var value = pool[field];
-  if( !value ){
-    value = pool[field] = evaluate(data, field);
+var util = DomTemp.util = {
+  isIE: navigator.userAgent.indexOf('MSIE') >= 0,
+  getValue: function(template, field, convert, data, pool){
+    var value = pool[field];
+    if( !value ){
+      value = pool[field] = evaluate(data, field);
+    }
+    var opt = template.opts[field];
+    if(typeof opt === 'function'){
+      value = opt(value, data);
+    }else if(opt !== void 0){
+      value = opt;
+    }
+    if( convert ){
+      value = convert(value);
+    }
+    return value;
+  },
+  convert: function(field, exp){
+    return new Function('val', 'return ' + exp);
+  },
+  hideNode: function(node){
+    // remember its parentNode for append to dom when showing.
+    if( !node._parent ) node._parent = node.parentNode;
+    if( !node._parent ) return;
+    // create a p elements to hold its position.
+    if( !node._replace ) node._replace = document.createTextNode('');
+    node._parent.replaceChild(node._replace, node);
+  },
+  showNode: function(node){
+    if( node._parent && node._replace){
+      node._parent.replaceChild(node, node._replace);
+    }
   }
-  var opt = template.opts[field];
-  if(typeof opt === 'function'){
-    value = opt(value, data);
-  }else if(opt !== void 0){
-    value = opt;
-  }
-  if( convert ){
-    value = convert(value);
-  }
-  return value;
 };
 
 DomTemp.prototype = {
@@ -79,20 +94,11 @@ DomTemp.prototype = {
     return this.show();
   },
   hide: function(){
-    var node = this.node;
-    // remember its parentNode for append to dom when showing.
-    if( !node._parent ) node._parent = node.parentNode;
-    if( !node._parent ) return this;
-    // create a p elements to hold its position.
-    if( !node._replace ) node._replace = document.createElement('p');
-    node._parent.replaceChild(node._replace, node);
+    util.hideNode(this.node);
     return this;
   },
   show: function(){
-    var node = this.node;
-    if( node._parent && node._replace){
-      node._parent.replaceChild(node, node._replace);
-    }
+    util.showNode(this.node);
     return this;
   }
 };
@@ -192,7 +198,7 @@ function merge(target, obj){
 /**
  * Scan attributes
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -217,7 +223,7 @@ function handleAttr(template, node, nodeName, nodeValue){
     holders.push({
       field: field,
       match: match,
-      convert: exp ? dt.convert(field, exp) : void 0
+      convert: exp ? util.convert(field, exp) : void 0
     });
   });
   if(holders.length === 0){
@@ -228,7 +234,7 @@ function handleAttr(template, node, nodeName, nodeValue){
       var real = nodeValue;
       for(var i = 0; i < holders.length; i++){
         var holder = holders[i];
-        var val = dt.getValue(this.template, holder.field, holder.convert, data, pool);
+        var val = util.getValue(this.template, holder.field, holder.convert, data, pool);
         real = real.replace(holder.match, val);
       }
       this.setAttribute(node, nodeName, real);
@@ -243,7 +249,6 @@ function handleAttr(template, node, nodeName, nodeValue){
 }
 
 var root = document.documentElement;
-
 var isDatasetSupported = !!root.dataset;
 
 function getDataset( node ){
@@ -259,7 +264,7 @@ function getDataset( node ){
   return map;
 }
 
-var attributeSetter = {
+var attributeSetter = dt.attributeSetter = {
   'value': 'innerHTML' in root ? function(node, name, value){
       node.innerHTML = value;
     } : function(node, name, value){
@@ -271,16 +276,26 @@ var attributeSetter = {
   'class': function(node, name, value){
     node.className = value;
   },
+  'indom': function(node, name, value){
+    if(value === 'true'){
+      util.showNode(node);
+    }else{
+      util.hideNode(node);
+    }
+  },
+  'display': function(node, name, value){
+    node.style.display = value === 'true' ? '' : 'none';
+  },
   '*': function(node, name, value){
     node.setAttribute(name, value);
   }
 };
 
-})(dt);
+})(dt, dt.util);
 /**
  * Scan form elements
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -330,7 +345,7 @@ var protos = {};
 protos.normal = function(){};
 protos.normal.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     this.nodes.value = val || '';
   },
   clear: function(){
@@ -344,7 +359,7 @@ protos.normal.prototype = {
 protos.radio = function(){};
 protos.radio.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes,
       len = nodes.length,
       v = '' + val;
@@ -376,7 +391,7 @@ protos.radio.prototype = {
 protos.checkbox = function(){};
 protos.checkbox.prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var nodes = this.nodes;
     var len = nodes.length;
     if( !isArray(val) ){
@@ -415,7 +430,7 @@ protos.checkbox.prototype = {
 protos['select-multiple'] = function(){};
 protos['select-multiple'].prototype = {
   fill: function(data, pool){
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     var options = this.nodes.children,
       len = options.length;
     for( var i = 0; i < len; i++ ){
@@ -462,12 +477,12 @@ function isArray( obj ){
   return obj && Object.prototype.toString.call(obj) === '[object Array]';
 }
 
-})(dt);
+})(dt, dt.util);
 
 /**
  * Scan loop
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -484,7 +499,10 @@ function scanLoop(template, node){
     empty: node.children[1],
     items: []
   });
-  node.innerHTML = '';
+  // if we use `node.innerHTML = '';`, item.innerHTML and empty.innerHTML will be '' in IE, even if IE10.
+  var range = document.createRange();
+  range.selectNodeContents(node);
+  range.deleteContents();
   node.removeAttribute('data-each');
   // return false to stop scanning it's children node.
   return false;
@@ -495,7 +513,7 @@ dt.scanners.push(scanLoop);
 var handler = {
   fill: function(data, pool){
     this.clear();
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     if(!val || val.length ===0){
       if(this.empty){
         this.node.appendChild(this.empty);
@@ -516,4 +534,4 @@ var handler = {
   }
 };
 
-})(dt);
+})(dt, dt.util);

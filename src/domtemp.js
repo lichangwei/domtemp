@@ -17,38 +17,40 @@ var DomTemp = window.dt = function(node, opts){
 
 DomTemp.regexp  = /\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
 DomTemp.scanners = [];
-DomTemp.isIE = navigator.userAgent.indexOf('MSIE') >= 0;
 
-DomTemp.convert = function(field, exp){
-  return new Function('val', 'return ' + exp);
-};
-DomTemp.getValue = function(template, field, convert, data, pool){
-  var value = pool[field];
-  if( !value ){
-    value = pool[field] = evaluate(data, field);
-  }
-  var opt = template.opts[field];
-  if(typeof opt === 'function'){
-    value = opt(value, data);
-  }else if(opt !== void 0){
-    value = opt;
-  }
-  if( convert ){
-    value = convert(value);
-  }
-  return value;
-};
-DomTemp.hideNode = function(node){
-  // remember its parentNode for append to dom when showing.
-  if( !node._parent ) node._parent = node.parentNode;
-  if( !node._parent ) return;
-  // create a p elements to hold its position.
-  if( !node._replace ) node._replace = document.createTextNode('');
-  node._parent.replaceChild(node._replace, node);
-};
-DomTemp.showNode = function(node){
-  if( node._parent && node._replace){
-    node._parent.replaceChild(node, node._replace);
+var util = DomTemp.util = {
+  isIE: navigator.userAgent.indexOf('MSIE') >= 0,
+  getValue: function(template, field, convert, data, pool){
+    var value = pool[field];
+    if( !value ){
+      value = pool[field] = evaluate(data, field);
+    }
+    var opt = template.opts[field];
+    if(typeof opt === 'function'){
+      value = opt(value, data);
+    }else if(opt !== void 0){
+      value = opt;
+    }
+    if( convert ){
+      value = convert(value);
+    }
+    return value;
+  },
+  convert: function(field, exp){
+    return new Function('val', 'return ' + exp);
+  },
+  hideNode: function(node){
+    // remember its parentNode for append to dom when showing.
+    if( !node._parent ) node._parent = node.parentNode;
+    if( !node._parent ) return;
+    // create a p elements to hold its position.
+    if( !node._replace ) node._replace = document.createTextNode('');
+    node._parent.replaceChild(node._replace, node);
+  },
+  showNode: function(node){
+    if( node._parent && node._replace){
+      node._parent.replaceChild(node, node._replace);
+    }
   }
 };
 
@@ -92,11 +94,11 @@ DomTemp.prototype = {
     return this.show();
   },
   hide: function(){
-    DomTemp.hideNode(this.node);
+    util.hideNode(this.node);
     return this;
   },
   show: function(){
-    DomTemp.showNode(this.node);
+    util.showNode(this.node);
     return this;
   }
 };

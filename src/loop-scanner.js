@@ -1,7 +1,7 @@
 /**
  * Scan loop
  */
-(function(dt){
+(function(dt, util){
 
 'use strict';
 
@@ -32,7 +32,7 @@ dt.scanners.push(scanLoop);
 var handler = {
   fill: function(data, pool){
     this.clear();
-    var val = dt.getValue(this.template, this.field, null, data, pool);
+    var val = util.getValue(this.template, this.field, null, data, pool);
     if(!val || val.length ===0){
       if(this.empty){
         this.node.appendChild(this.empty);
@@ -53,4 +53,4 @@ var handler = {
   }
 };
 
-})(dt);
+})(dt, dt.util);
