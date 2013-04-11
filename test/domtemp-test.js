@@ -25,11 +25,18 @@ test('create & fill & append & clear', function(){
   equal(node.children[0].innerHTML, '', 'innerHTML');
 });
 
-test('create with jquery object', function(){
+test('create with a jquery object or selector string', function(){
   var $node = $('.jquery > p');
   var temp = dt($node);
   temp.fill( {text: 'text'} );
   equal($node.html(), 'text');
+});
+
+test('create with a jquery object or selector string', function(){
+  var $node = $('.jquery > p');
+  var temp = dt('.selector > p');
+  temp.fill( {text: 'selector'} );
+  equal(temp.node.innerHTML, 'selector');
 });
 
 test('fill & append subattr', function(){

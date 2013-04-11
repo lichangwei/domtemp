@@ -1,7 +1,7 @@
 {
   "name": "domtemp",
   "description": "A DOM-based template engine.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "author": {
     "name": "Li Chang Wei",

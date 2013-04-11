@@ -1,7 +1,7 @@
 **domtemp，一个简单的基于DOM的Javascript模板引擎，在任意节点的data-*属性中引入{{}}即可，适合需要复用DOM节点的Web App网站。最大限度地减少绑定事件解除事件的次数。**  
 # API：  
 **dt(node, opt)**  
-@param node: DOM节点，必选。  
+@param node: DOM节点，jQuery对象或者选择器字符串，必选。  
 @param opt: 对象，可选。比如`{ thisp: XXObj, enable: "enable-msg", once: true }`所有可选参数。  
 &nbsp;&nbsp;&nbsp;&nbsp;可以给某些占位符指定固定的值或者特殊的处理函数，用法详见[Q && A](#q--a)部分。  
 @return template，拥有某些特殊方法fill，append，clear，opt）的对象。  
@@ -87,6 +87,7 @@ archievements: function( archs, data ){
 
 
 # Change Log
+### 1.0.3 Create a template by passing a selector string, document.querySelector() will be called.
 ### 1.0.2 Add data-indom and data-display, bug fix for IE10.
-### 1.0.1 use grunt to manage source.
-### 1.0.0 (Initial version)
+### 1.0.1 Use grunt to manage source.
+### 1.0.0 Initial version.

@@ -19,7 +19,6 @@ DomTemp.regexp  = /\{\{\s*([\w\d\.]+)\s*:?\s*([^}]*)\}\}/ig;
 DomTemp.scanners = [];
 
 var util = DomTemp.util = {
-  isIE: navigator.userAgent.indexOf('MSIE') >= 0,
   getValue: function(template, field, convert, data, pool){
     var value = pool[field];
     if( !value ){
@@ -106,30 +105,14 @@ DomTemp.prototype = {
 var container = document.createElement('body');
 
 function setUp(template, node, opts){
-  var html;
   if(typeof jQuery !== 'undefined' && node instanceof jQuery){
     node = node[0];
   }
-  // @TODO don't support tbody tr etc. tag
   if(typeof node === 'string'){
-    container.innerHTML = node;
-    html = node;
-    node = container.children[0];
-    // or node.parentNode is container(impact with prototype.hide function).
-    // If we use container.innerHTML = '', node.innerHTML will also be '' in IE.
-    container.removeChild(node);
-  }else{
-    if( node.outerHTML ){
-      html = node.outerHTML;
-    }else{
-      container.innerHTML = '';
-      container.appendChild(node);
-      html = container.innerHTML;
-    }
+    node = document.querySelector(node);
   }
   template.node = node;
   template.opts = opts;
-  template.html = html;
   template.handlers = [];
 }
 
