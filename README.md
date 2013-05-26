@@ -87,7 +87,8 @@ archievements: function( archs, data ){
 
 
 # Change Log
-### 1.0.3 Create a template by passing a selector string, document.querySelector() will be called.
-### 1.0.2 Add data-indom and data-display, bug fix for IE10.
-### 1.0.1 Use grunt to manage source.
-### 1.0.0 Initial version.
+###### 1.0.4 data-each="arrayName|indexAttrName", you can set the index attribute name now. see #1
+###### 1.0.3 Create a template by passing a selector string, document.querySelector() will be called.
+###### 1.0.2 Add data-indom and data-display, bug fix for IE10.
+###### 1.0.1 Use grunt to manage source.
+#### 1.0.0 Initial version.
