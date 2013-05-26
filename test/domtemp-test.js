@@ -103,8 +103,10 @@ test('fill a loop', function(){
   equal(loop.children.length,               3);
   equal(loop.querySelectorAll('li').length, 4);
   equal(loop.querySelectorAll('p').length,  1);
+  equal(loop.querySelectorAll('[uindex="0"]').length, 1);
+  equal(loop.querySelectorAll('[findex="0"]').length, 2);
   if(typeof console !== 'undefined' && console.log){
-    //console.log(loop.innerHTML);
+    console.log(loop.innerHTML);
   }
 });
 

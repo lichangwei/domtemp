@@ -50,7 +50,8 @@ var util = DomTemp.util = {
     if( node._parent && node._replace){
       node._parent.replaceChild(node, node._replace);
     }
-  }
+  },
+  merge: merge
 };
 
 DomTemp.prototype = {
@@ -470,14 +471,22 @@ function isArray( obj ){
 'use strict';
 
 function scanLoop(template, node){
+  // formamt: filed|indexAttrName
   var field = node.getAttribute('data-each');
-  if( !field ) return;
+  if(!field) return;
+  
+  var array = field.split('|');
+  field = array[0];
+  var indexAttrName = array[1] || 'index';
+  
   template.handlers.push({
     template: template,
+    opts: util.merge(null, template.opts),
     node: node,
     fill: handler.fill,
     clear: handler.clear,
     field: field,
+    index: indexAttrName,
     item: node.children[0],
     empty: node.children[1],
     items: []
@@ -505,7 +514,8 @@ var handler = {
       for(var i = 0, len = val.length; i < len; i++){
         var item = this.items[i];
         if(!item){
-          item = this.items[i] = dt(this.item.cloneNode(true), this.template.opts);
+          this.opts[this.index] = i;
+          item = this.items[i] = dt(this.item.cloneNode(true), this.opts);
         }
         item.fill( val[i] );
         this.node.appendChild(item.node);

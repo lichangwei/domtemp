@@ -50,7 +50,8 @@ var util = DomTemp.util = {
     if( node._parent && node._replace){
       node._parent.replaceChild(node, node._replace);
     }
-  }
+  },
+  merge: merge
 };
 
 DomTemp.prototype = {

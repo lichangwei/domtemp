@@ -37,13 +37,14 @@
           <p data-value="Age: {{age}}"></p>
         </div>
       </div>
+
       <div class="loop">
         <div data-each="users">
           <div class="user">
-            <div data-value="name: {{name}}">Name: </div>
+            <div data-value="Name: {{name}}" data-uindex="{{index}}">Name: </div>
             <div>Favorite: 
-              <ul data-each="favorites">
-                <li data-value="{{.}}"></li>
+              <ul data-each="favorites|findex">
+                <li data-value="{{.}}" data-findex="{{findex}}"></li>
                 <p>X</p>
               </ul>
             </div>
@@ -51,6 +52,7 @@
           <p>No users.</p>
         </div>
       </div>
+      
       <div class="form">
         <form id="user-info">
           <fieldset>

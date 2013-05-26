@@ -43,9 +43,6 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: ['jshint', 'qunit']
-    },
-    pkg2cmp: {
-      target: {}
     }
   });
 
@@ -56,7 +53,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-plugin-pkg2cmp');
 
-  grunt.registerTask('default', ['pkg2cmp', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['qunit', 'concat', 'uglify']);
   grunt.registerTask('test', ['qunit']);
 
 };

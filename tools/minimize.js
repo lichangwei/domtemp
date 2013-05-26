@@ -24,5 +24,7 @@ var compressed = licence +
   output.code + '\n' +
   '//@ sourceMappingURL=' + options.outSourceMap;
 
-fs.writeFileSync('../domtemp-min.js', compressed);
+fs.writeFileSync('../domtemp.min.js', compressed);
 fs.writeFileSync('../' + options.outSourceMap, output.map);
+
+console.log('Compelete to compress domtemp.min.js');
