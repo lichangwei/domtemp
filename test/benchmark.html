@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Benchmark test for Domtemp</title>
+  <style rel="stylesheet">
+    .template {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="result"></div>
+  <div class="template form">
+    <form id="user-info">
+      <fieldset>
+        <legend>编辑用户信息</legend>
+      </fieldset>
+      <div class="clearfix">
+        <label>姓名：</label>
+        <div class="input">
+          <input type="text" name="name" class="xlarge" autofocus>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>性别：</label>
+        <div class="input input-radio">
+          <input type="radio" name="gender" value="0" id="fui-m" number><label for="fui-m">男性</label>
+          <input type="radio" name="gender" value="1" id="fui-f"><label for="fui-f">女性</label>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>年龄：</label>
+        <div class="input">
+          <input type="number" name="age" max="100" min="0" step="1" class="xlarge" number>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>简介：</label>
+        <div class="input">
+          <textarea name="desc" class="xlarge"></textarea>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>语言：</label>
+        <div class="input input-checkbox">
+          <input type="checkbox" name="details.language" value="Chinese" id="fui-c"><label for="fui-c">中文</label>
+          <input type="checkbox" name="details.language" value="English" id="fui-e"><label for="fui-e">英文</label>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>学校：</label>
+        <div class="input">
+          <select name="details.school" class="xlarge">
+            <option value="">请选择毕业院校</option>
+            <option value="HFUT">HFUT</option>
+            <option value="NOT">NOT</option>
+          </select>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label>运动：</label>
+        <div class="input">
+          <select name="details.sports" multiple class="xlarge">
+            <option value="">请选择喜爱的体育项目</option>
+            <option value="Basketball">篮球</option>
+            <option value="Football">足球</option>
+            <option value="PingPong">乒乓球</option>
+          </select>
+        </div>
+      </div>
+      <div class="clearfix">
+        <label></label>
+        <div class="input">
+          <input type="checkbox" name="confirmed" value="1" id="fui-cf" number><label for="fui-cf">允许别人查看我的信息。</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <script src="../domtemp.min.js"></script>
+  <script src="benchmark.js"></script>
+  <script>
+    var domResult = document.querySelector('#result');
+    var domForm = document.querySelector('.form');
+    var suite = new Benchmark.Suite;
+    var temp = dt(domForm);
+
+    suite.add('Domtemp#Create', function(){
+      dt(domForm);
+    })
+    .add('Domtemp#fill', function(){
+      var data = {
+        name: 'sofosogo',
+        gender: 0,
+        age: 24,
+        desc: 'SE',
+        details:{
+          language: ['Chinese', 'English'],
+          school: 'HFUT',
+          sports: ['Basketball', 'PingPong']
+        },
+        confirmed: 1
+      };
+      temp.fill(data);
+    })
+    .on('cycle', function(event){
+      domResult.innerHTML += '<p>' + (String(event.target)) + '</p>';
+    })
+    /*
+    .on('complete', function(){
+      domResult.innerHTML += '<p>Fastest is ' + this.filter('fasteat').pluck('name') + '</p>';
+    })
+    */
+    .run({'async': true});
+    /*
+    console.time('create');
+    for(var i = 0; i < 10000; i++){
+      dt(domForm);
+    }
+    domResult.innerHTML += console.timeEnd('create');
+    */
+  </script>
+</body>
+</html>
